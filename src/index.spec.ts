@@ -4,6 +4,7 @@ import { Test } from 'tape';
 let _test = require('tape-promise');
 const test = _test(tape); // decorate tape 
 
-test('placeholder', function(t: Test): void {
+test('should be requireable', function (t: Test): void {
+  t.ok(require('./'), 'required without error');
   t.end();
 });
