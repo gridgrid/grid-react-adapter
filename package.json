@@ -19,6 +19,9 @@
     "type": "git",
     "url": "git+https://github.com/creditiq/base.git"
   },
+  "dependencies": {
+
+  },
   "devDependencies": {
     "@types/mockery": "~1.4.29",
     "@types/node": "~6.0.45",
