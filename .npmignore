@@ -1,0 +1,8 @@
+*
+!dist/**/*
+!src/**/*
+*.spec.*
+*.test.*
+*.spec.d.ts
+*.test.d.ts
+yarn.lock
