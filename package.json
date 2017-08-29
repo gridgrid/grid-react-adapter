@@ -35,7 +35,8 @@
     "tap-spec": "^4.1.1",
     "tape": "^4.5.1",
     "tape-promise": "^1.0.1",
-    "tslint": "^3.15.0",
+    "transform-ts-paths": "^1.0.0",
+    "tslint": "^5.4.2",
     "typescript": "^2.2.0",
     "watch": "^0.17.1"
   },

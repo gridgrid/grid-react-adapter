@@ -1,4 +1,7 @@
 {
+  "extends": [
+    "tslint:latest"
+  ],
   "rules": {
     "align": [
       true,
@@ -18,10 +21,10 @@
       true,
       "spaces"
     ],
-    "interface-name": false,
+    "interface-name": [true, "always-prefix"],
     "jsdoc-format": false,
+    "jsx-no-multiline-js": false, // maybe turn this on when we have more time to fix it
     "label-position": true,
-    "label-undefined": true,
     "max-line-length": [
       true,
       140
@@ -37,7 +40,7 @@
     "no-arg": true,
     "no-bitwise": true,
     "no-conditional-assignment": true,
-    "no-consecutive-blank-lines": false,
+    "no-consecutive-blank-lines": [true, 1],
     "no-console": [
       true,
       "debug",
@@ -49,11 +52,11 @@
     "no-construct": true,
     "no-constructor-vars": false,
     "no-debugger": true,
-    "no-duplicate-key": true,
     "no-duplicate-variable": true,
     "no-empty": true,
+    "no-empty-interface": false,
     "no-eval": true,
-    "no-inferrable-types": false,
+    "no-inferrable-types": [false],
     "no-internal-module": true,
     "no-null-keyword": false,
     "no-require-imports": false,
@@ -61,13 +64,13 @@
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": true,
-    "no-unreachable": true,
     "no-unused-expression": true,
     "no-unused-variable": true,
-    "no-use-before-declare": true,
+    "no-use-before-declare": false,
     "no-var-keyword": true,
     "no-var-requires": false,
     "object-literal-sort-keys": false,
+    "object-literal-key-quotes": [true, "as-needed"],
     "one-line": [
       true,
       "check-open-brace",
@@ -75,33 +78,39 @@
       "check-else",
       "check-whitespace"
     ],
+    "ordered-imports": [true, "case-insensitive"],
     "quotemark": [
       true,
       "single",
+      "jsx-double",
       "avoid-escape"
     ],
     "radix": true,
-    "semicolon": true,
+    "semicolon": [true, "always"],
+    // "sort-imports": true, //NO this is the worst
+    "space-before-function-paren": [true, "anonymous", "always"],
     "switch-default": false,
     "trailing-comma": [
-      false, {
+      false,
+      {
         "multiline": "always",
         "singleline": "never"
       }
     ],
     "triple-equals": [
       true,
-      "allow-null-check"
+      "allow-null-check",
+      "allow-undefined-check"
     ],
     "typedef": [
       true,
-      "call-signature",
       "parameter",
       "property-declaration",
       "member-variable-declaration"
     ],
     "typedef-whitespace": [
-      true, {
+      true,
+      {
         "index-signature": "nospace",
         "parameter": "nospace",
         "property-declaration": "nospace",
