@@ -19,5 +19,5 @@ module.exports = {
     'js'
   ],
   moduleNameMapper: moduleNameMapper,
-  // watchPathIgnorePatterns: ['dist']
+  watchPathIgnorePatterns: ['dist']
 };
