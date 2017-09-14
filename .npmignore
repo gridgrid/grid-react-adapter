@@ -5,4 +5,4 @@
 *.test.*
 *.spec.d.ts
 *.test.d.ts
-yarn.lock
+package-lock.json
