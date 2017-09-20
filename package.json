@@ -58,5 +58,8 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "ciq": {
+    "upstream": "git@github.com:creditiq/base.git"
   }
 }
