@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -e
+
+STAGE=$1
+PROFILE=${STAGE}
+BASE_DIR=./dist
+DIR=$BASE_DIR/main
+BUCKET_PREFIX=a-reasonable-bucket-name
+
+if [ "$STAGE" != "staging" ] && [ "$STAGE" != "prod" ]; then
+  echo "ERROR: Invalid stage: $STAGE"
+  exit 1
+fi
+
+case "$STAGE" in
+ staging)
+  CLOUDFRONT_DISTRIBUTION_IDS=$STAGING_CLOUDFRONT_DISTRIBUTION_IDS
+  BUCKET=$(BUCKET_PREFIX).staging.creditiq.com
+  DEMO_BUCKET=demo-$(BUCKET_PREFIX).staging.creditiq.com
+  ;;
+ prod)
+  CLOUDFRONT_DISTRIBUTION_IDS=$PROD_CLOUDFRONT_DISTRIBUTION_IDS
+  BUCKET=$(BUCKET_PREFIX).creditiq.com
+  DEMO_BUCKET=demo-$(BUCKET_PREFIX).creditiq.com
+  ;;
+esac
+
+# add AWS profiles
+mkdir -p ~/.aws
+cat > ~/.aws/credentials <<EOF
+[staging]
+aws_access_key_id=${STAGING_ACCESS_KEY}
+aws_secret_access_key=${STAGING_SECRET_KEY}
+
+[prod]
+aws_access_key_id=${PROD_ACCESS_KEY}
+aws_secret_access_key=${PROD_SECRET_KEY}
+EOF
+
+# deploy
+aws s3 rm s3://$BUCKET --include "*" --exclude "*sdk.js" --recursive --profile $PROFILE
+aws s3 sync $DIR s3://$BUCKET/ --profile $PROFILE
+
+# deploy demo
+if [[ -n $DEMO_BUCKET ]];
+then
+  aws s3 rm s3://$DEMO_BUCKET --include "*" --recursive --profile $PROFILE
+  aws s3 sync $BASE_DIR/demo s3://$DEMO_BUCKET/ --profile $PROFILE
+fi
+
+# invalidate CDN cache for index.html
+aws configure set preview.cloudfront true
+
+for id in ${CLOUDFRONT_DISTRIBUTION_IDS//,/ }
+do
+  aws cloudfront create-invalidation --distribution-id $id --paths / /index.html --profile $PROFILE
+done
