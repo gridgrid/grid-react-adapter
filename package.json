@@ -60,6 +60,6 @@
     }
   },
   "ciq": {
-    "upstream": "git@github.com:creditiq/base.git"
+    "upstream": null
   }
 }
