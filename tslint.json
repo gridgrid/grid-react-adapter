@@ -66,6 +66,7 @@
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-duplicate-imports": false,
+    "no-submodule-imports": false,
     "no-unused-variable": true,
     "no-use-before-declare": false,
     "no-var-keyword": true,
