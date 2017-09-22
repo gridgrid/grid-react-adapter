@@ -22,6 +22,7 @@
       "spaces"
     ],
     "interface-name": [true, "always-prefix"],
+    "interface-over-type-literal": false,
     "jsdoc-format": false,
     "jsx-no-multiline-js": false, // maybe turn this on when we have more time to fix it
     "label-position": true,
