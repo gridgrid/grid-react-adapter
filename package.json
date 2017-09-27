@@ -20,6 +20,9 @@
     "open:src": "babel-node tools/srcServer.js",
     "open:dist": "babel-node tools/distServer.js",
     "pretest": "npm run compile",
+    "prebuild": "npm run clean && npm run test",
+    "build": "babel-node tools/build.js",
+    "build:server": "npm run build && npm run open:dist",
     "test": "jest --config jest.single.config.js",
     "test:watch": "CI=true jest --watch"
   },
