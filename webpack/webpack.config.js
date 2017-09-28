@@ -142,6 +142,7 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
           ]
         }
       },
+      'resolve-url-loader',
       'sass-loader',
       'source-map-loader'
     ]
@@ -151,7 +152,7 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
   const extractTextOptionsGlobal = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
   extractTextOptionsGlobal.use[0].options.modules = false;
   const extractTextOptionsCss = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
-  extractTextOptionsCss.use.splice(3, 1);
+  extractTextOptionsCss.use.splice(extractTextOptionsCss.use.indexOf('sass-loader'), 1);
 
   const module = {
     rules: [{
