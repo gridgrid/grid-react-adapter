@@ -4,6 +4,7 @@ import WebpackMd5Hash from 'webpack-md5-hash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import autoprefixer from 'autoprefixer';
+import * as path from 'path';
 
 import failPlugin from 'webpack-fail-plugin';
 import {
@@ -28,7 +29,7 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
     publicPath: '/',
     filename: 'bundle.js'
   } : {
-    path: `./dist/${isDemo ? 'demo' : 'main'}`,
+    path: path.join(__dirname, `dist/${isDemo ? 'demo' : 'main'}`),
     publicPath: '/',
     filename: '[name].[chunkhash].js',
     sourceMapFilename: '[file].map'
@@ -149,16 +150,13 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
   // yaya it's dirty but it's also DRY. DRY and dirty suckas.
   const extractTextOptionsGlobal = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
   extractTextOptionsGlobal.use[0].options.modules = false;
+  const extractTextOptionsCss = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
+  extractTextOptionsCss.use.splice(3, 1);
 
   const module = {
     rules: [{
         test: /\.tsx?$/,
         use: ['awesome-typescript-loader']
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
-        use: ['babel']
       },
       {
         test: /\.js$/,
@@ -232,10 +230,10 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
         test: globalSassRegex,
         use: ExtractTextPlugin.extract(extractTextOptionsGlobal)
       },
-      // {
-      //   test: /\.css$/,
-      //   use: ExtractTextPlugin.extract('style', 'css?sourceMap&importLoaders=1&localI‌​dentName=[name]__[local]___[hash:base64:5]!postcss?sourceMap')
-      // }
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract(extractTextOptionsCss)
+      }
     ]
   };
 
