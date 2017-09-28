@@ -139,12 +139,12 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
         options: {
           plugins: (loader) => [
             autoprefixer(),
-          ]
+          ],
+          sourceMap: true
         }
       },
-      'resolve-url-loader',
-      'sass-loader',
-      'source-map-loader'
+      'resolve-url-loader?sourceMap',
+      'sass-loader?sourceMap'
     ]
   };
 
