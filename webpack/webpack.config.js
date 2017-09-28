@@ -162,6 +162,12 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
         test: /\.js$/,
         use: ["source-map-loader"]
       },
+      // this is just for libraries that are imported ATL doesn't transform those
+      {
+        test: /\.js$/,
+        exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
+        use: ['babel-loader']
+      },
       {
         test: /\.eot(\?v=\d+.\d+.\d+)?$/,
         use: {
