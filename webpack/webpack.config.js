@@ -3,7 +3,6 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackMd5Hash from 'webpack-md5-hash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import CoreJsPlugin from 'core-js-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 
 import failPlugin from 'webpack-fail-plugin';
@@ -42,16 +41,10 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
       failPlugin
     ] || []),
 
-    new CoreJsPlugin({
-      modules: ['es6.promise'],
-    }),
-
     ...(!isDev && [
       // Hash the files using MD5 so that their names change when the content changes.
       new WebpackMd5Hash(),
 
-      // Optimize the order that items are bundled. This assures the hash is deterministic.
-      new webpack.optimize.OccurenceOrderPlugin(),
     ] || []),
 
     new webpack.DefinePlugin({
@@ -96,11 +89,12 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
 
     ...(isDev && [
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin(),
+      // new webpack.NoErrorsPlugin(),
     ] || []),
 
     new CheckerPlugin(),
-    new ExtractTextPlugin(isDev ? 'app.css' : '[name].[contenthash].css', {
+    new ExtractTextPlugin({
+      filename: isDev ? 'app.css' : '[name].[contenthash].css',
       allChunks: true
     }),
     new HtmlWebpackPlugin({ // Create HTML file that includes references to bundled CSS and JS.
@@ -121,76 +115,142 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
     }),
     ...(!isDev && [
 
-      // Eliminate duplicate packages when generating bundle
-      new webpack.optimize.DedupePlugin(),
-
       // Minify JS
       new webpack.optimize.UglifyJsPlugin({
         sourceMap: true
       })
-    ] || [])
+    ] || []),
   ];
 
+  const extractTextOptionsNonGlobal = {
+    fallback: 'style-loader',
+    use: [{
+        loader: 'css-loader',
+        options: {
+          sourceMap: true,
+          modules: true,
+          importLoaders: 1,
+          localIdentName: '[name]__[local]___[hash:base64:5]'
+        }
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          plugins: (loader) => [
+            autoprefixer(),
+          ]
+        }
+      },
+      'sass-loader',
+      'source-map-loader'
+    ]
+  };
+
+  // yaya it's dirty but it's also DRY. DRY and dirty suckas.
+  const extractTextOptionsGlobal = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
+  extractTextOptionsGlobal.use[0].options.modules = false;
+
   const module = {
-    preLoaders: [{
-      test: /\.js$/,
-      loader: "source-map-loader"
-    }],
-    loaders: [{
+    rules: [{
         test: /\.tsx?$/,
-        loader: 'awesome-typescript-loader'
-      }, {
+        use: ['awesome-typescript-loader']
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
-        loaders: ['babel']
+        use: ['babel']
+      },
+      {
+        test: /\.js$/,
+        use: ["source-map-loader"]
       },
       {
         test: /\.eot(\?v=\d+.\d+.\d+)?$/,
-        loader: 'url?name=assets/fonts/[name].[ext]'
-      }, {
+        use: {
+          loader: 'url-loader',
+          options: {
+            'name': 'assets/fonts/[name].[ext]'
+          }
+        }
+      },
+      {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url?limit=10000&mimetype=application/font-woff&name=assets/fonts/[name].[ext]"
-      }, {
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/font-woff',
+            name: 'assets/fonts/[name].[ext]'
+          }
+        }]
+      },
+      {
         test: /\.ttf(\?v=\d+.\d+.\d+)?$/,
-        loader: 'url?limit=10000&mimetype=application/octet-stream&name=assets/fonts/[name].[ext]'
-      }, {
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'application/octet-stream',
+            name: 'assets/fonts/[name].[ext]'
+          }
+        }]
+      },
+      {
         test: /\.svg(\?v=\d+.\d+.\d+)?$/,
-        loader: 'url?limit=10000&mimetype=image/svg+xml&name=assets/fonts/[name].[ext]'
-      }, {
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            mimetype: 'image/svg+xml',
+            name: 'assets/fonts/[name].[ext]'
+          }
+        }],
+      },
+      {
         test: /\.(jpe?g|png|gif|pdf)$/i,
-        loader: 'file?name=assets/images/[name].[ext]'
-      }, {
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: 'assets/images/[name].[ext]'
+          }
+        }]
+      },
+      {
         test: /\.ico$/,
-        loader: 'file?name=assets/icons/[name].[ext]'
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: 'assets/icons/[name].[ext]'
+          }
+        }]
       },
       {
         test: (absPath) => /\.scss$/.test(absPath) && !globalSassRegex.test(absPath),
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1&localI‌​dentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
-      }, {
+        use: ExtractTextPlugin.extract(extractTextOptionsNonGlobal)
+      },
+      {
         test: globalSassRegex,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap&importLoaders=1&localI‌​dentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
-      }, {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap&importLoaders=1&localI‌​dentName=[name]__[local]___[hash:base64:5]!postcss?sourceMap')
-      }
+        use: ExtractTextPlugin.extract(extractTextOptionsGlobal)
+      },
+      // {
+      //   test: /\.css$/,
+      //   use: ExtractTextPlugin.extract('style', 'css?sourceMap&importLoaders=1&localI‌​dentName=[name]__[local]___[hash:base64:5]!postcss?sourceMap')
+      // }
     ]
   };
 
   // webpack config object
   const config = {
     resolve: {
-      extensions: ['', '.js', '.ts', '.tsx'],
+      extensions: ['.js', '.ts', '.tsx'],
       alias: aliases
     },
-    debug: true,
     devtool: 'source-map', // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
-    noInfo: true, // set to false to see a list of every file being bundled.
     entry,
     target: 'web', // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
     output,
     plugins,
     module,
-    postcss: () => [autoprefixer]
   };
   return config;
 };
