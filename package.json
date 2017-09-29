@@ -30,7 +30,10 @@
     "type": "git",
     "url": "git+https://github.com/creditiq/web-base.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react": "~15.3.1",
+    "react-dom": "~15.3.1"
+  },
   "devDependencies": {
     "@types/jest": "^20.0.8",
     "@types/node": "^7.0.12",
@@ -68,8 +71,6 @@
     "node-sass": "^4.5.3",
     "npm-run-all": "^4.1.1",
     "postcss-loader": "^2.0.6",
-    "react": "~15.3.1",
-    "react-dom": "~15.3.1",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "source-map-loader": "~0.2.0",
