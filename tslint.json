@@ -62,6 +62,7 @@
     "no-inferrable-types": [false],
     "no-internal-module": true,
     "no-null-keyword": false,
+    "no-object-literal-type-assertion": false,
     "no-require-imports": false,
     "no-shadowed-variable": true,
     "no-string-literal": true,
