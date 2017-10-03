@@ -18,19 +18,33 @@ var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlug
 const globalSassRegex = /(global|toastr)\.scss$/;
 const aliases = transformTsConfigPaths();
 
-export default (isDemo, branchName, isDev = false, isMockData = false, isStagingApi = false, isOffline = false) => {
+export default (opts) => {
+  const isDemo = opts.isDemo;
+  const branchName = opts.branchName;
+  const isDev = opts.isDev || false;
+  const isMockData = opts.isMockData || false;
+  const isStagingApi = opts.isStagingApi || false;
+  const isOffline = opts.isOffline || false;
+  const isLibrary = opts.isLibrary || false;
+
   const useStagingUrls = !!isStagingApi || (!isDev && branchName !== 'prod');
   const entry = [
     'whatwg-fetch',
     'babel-polyfill',
     ...(isDev && ['./src/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
-    './src/index'
+    isLibrary ? './src/components/index' : './src/index'
   ];
 
   const output = isDev ? {
     path: `${__dirname}/src`, // Note: Physical files are only output by the production build task `npm run build`.
     publicPath: '/',
     filename: 'bundle.js'
+  } : isLibrary ? {
+    path: path.join(__dirname, `../dist/`),
+    publicPath: '/',
+    filename: '[name].js',
+    sourceMapFilename: '[file].map',
+    libraryTarget: 'commonjs2'
   } : {
     path: path.join(__dirname, `../dist/${isDemo ? 'demo' : 'main'}`),
     publicPath: '/',
@@ -267,7 +281,12 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
     module,
   };
   if (!isDev) {
-    config.externals = externals;
+    config.externals = {
+      ...(isLibrary && {
+        'react': 'commonjs react', // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+      }),
+      ...externals
+    };
   }
   return config;
 };

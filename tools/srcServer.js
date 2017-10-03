@@ -23,7 +23,14 @@ const isOffline = !!yargs.parse(process.argv).offline;
 const isDemo = process.argv[2] === 'demo';
 const isStagingApi = process.argv[2] === 'staging';
 const isMockData = process.argv[2] !== 'api' && !isStagingApi;
-const config = createConfig(isDemo, branchName, true, isMockData, isStagingApi, isOffline);
+const config = createConfig({
+  isDemo,
+  branchName,
+  isDev: true,
+  isMockData,
+  isStagingApi,
+  isOffline
+});
 const bundler = webpack(config);
 
 // Run Browsersync and use middleware for Hot Module Replacement

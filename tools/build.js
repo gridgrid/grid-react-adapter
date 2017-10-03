@@ -20,6 +20,12 @@ process.env.NODE_ENV = 'production'; // this assures React is built in prod mode
 console.log(chalkProcessing('Generating minified bundle for production via Webpack. This will take a moment...'));
 
 webpack([
-  createConfig(false, branchName),
-  createConfig(true, branchName)
+  createConfig({
+    isDemo: false,
+    branchName
+  }),
+  createConfig({
+    isDemo: true,
+    branchName
+  })
 ]).run(doneCallback);

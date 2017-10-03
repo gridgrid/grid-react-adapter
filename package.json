@@ -5,7 +5,7 @@
   "typings": "dist/components/index.d.ts",
   "scripts": {
     "commitmsg": "validate-commit-msg",
-    "preversion": "npm run test",
+    "preversion": "npm run build:component",
     "clean": "rm -rf dist",
     "precompile": "npm run clean",
     "compile": "node_modules/.bin/tsc -p . && npm run compile:babel",
