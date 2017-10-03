@@ -34,19 +34,20 @@ export default (opts) => {
     ...(isDev && ['./src/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
     isLibrary ? './src/components/index' : './src/index'
   ];
+  const distPath = path.resolve(__dirname, `../dist/`);
 
   const output = isDev ? {
     path: `${__dirname}/src`, // Note: Physical files are only output by the production build task `npm run build`.
     publicPath: '/',
     filename: 'bundle.js'
   } : isLibrary ? {
-    path: path.join(__dirname, `../dist/`),
+    path: distPath,
     publicPath: '/',
     filename: '[name].js',
     sourceMapFilename: '[file].map',
     libraryTarget: 'commonjs2'
   } : {
-    path: path.join(__dirname, `../dist/${isDemo ? 'demo' : 'main'}`),
+    path: path.resolve(distPath, `${isDemo ? 'demo' : 'main'}`),
     publicPath: '/',
     filename: '[name].[chunkhash].js',
     sourceMapFilename: '[file].map'
@@ -178,7 +179,12 @@ export default (opts) => {
             loader: 'babel-loader'
           },
           {
-            loader: 'ts-loader'
+            loader: 'ts-loader',
+            options: {
+              compilerOptions: {
+                outDir: distPath
+              }
+            }
           }
         ]
       },
