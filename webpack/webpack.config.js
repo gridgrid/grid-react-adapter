@@ -30,7 +30,6 @@ export default (opts) => {
   const useStagingUrls = !!isStagingApi || (!isDev && branchName !== 'prod');
   const entry = [
     'whatwg-fetch',
-    'babel-polyfill',
     ...(isDev && ['./src/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
     isLibrary ? './src/components/index' : './src/index'
   ];
@@ -176,7 +175,10 @@ export default (opts) => {
     rules: [{
         test: /\.tsx?$/,
         use: [{
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              "plugins": ["transform-runtime"]
+            }
           },
           {
             loader: 'ts-loader',
