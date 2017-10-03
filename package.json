@@ -1,7 +1,8 @@
 {
   "name": "@creditiq/web-base",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
+  "typings": "dist/components/index.d.ts",
   "scripts": {
     "commitmsg": "validate-commit-msg",
     "preversion": "npm run test",
@@ -22,6 +23,9 @@
     "pretest": "npm run compile",
     "prebuild": "npm run clean && npm run test",
     "build": "babel-node tools/build.js",
+    "prebuild:component": "npm run prebuild",
+    "build:component": "babel-node tools/buildComponent.js",
+    "build:component:watch": "npm run build:component -- --watch",
     "build:server": "npm run build && npm run open:dist",
     "test": "jest --config jest.single.config.js",
     "test:watch": "CI=true jest --watch"
@@ -81,6 +85,7 @@
     "style-loader": "^0.18.2",
     "transform-ts-paths": "^1.0.0",
     "ts-jest": "^20.0.11",
+    "ts-loader": "^2.3.7",
     "tslint": "^5.4.2",
     "tslint-eslint-rules": "^4.1.1",
     "tslint-react": "^3.0.0",
@@ -97,7 +102,6 @@
   "engines": {
     "node": ">=4.3.x"
   },
-  "typings": "dist/index.d.ts",
   "description": "placeholder",
   "license": "UNLICENSED",
   "config": {

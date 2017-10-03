@@ -9,17 +9,25 @@ import {
   chalkWarning,
   chalkProcessing
 } from './chalkConfig';
+import * as yargs from 'yargs';
 
 import {
   doneCallback
 } from './buildCallback';
 
+const isWatchMode = !!yargs.parse(process.argv).watch;
 const branchName = process.env.npm_package_config_build_branch; // ok if this is undefined
 process.env.NODE_ENV = 'production'; // this assures React is built in prod mode and that the Babel dev config doesn't apply.
 
+
 console.log(chalkProcessing('Generating minified bundle for production via Webpack. This will take a moment...'));
 
-webpack([
-  createConfig(false, branchName),
-  createConfig(true, branchName)
-]).run(doneCallback);
+const webpackInstance = webpack(
+  createConfig(false, branchName)
+);
+
+if (isWatchMode) {
+  webpackInstance.watch(undefined, doneCallback);
+} else {
+  webpackInstance.run(doneCallback);
+}

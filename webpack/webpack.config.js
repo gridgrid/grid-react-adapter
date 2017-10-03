@@ -6,10 +6,13 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import * as path from 'path';
 
+
 import failPlugin from 'webpack-fail-plugin';
 import {
   CheckerPlugin
 } from 'awesome-typescript-loader';
+
+import externals from './externals';
 import transformTsConfigPaths from '../transformTSPaths';
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const globalSassRegex = /(global|toastr)\.scss$/;
@@ -29,7 +32,7 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
     publicPath: '/',
     filename: 'bundle.js'
   } : {
-    path: path.join(__dirname, `dist/${isDemo ? 'demo' : 'main'}`),
+    path: path.join(__dirname, `../dist/${isDemo ? 'demo' : 'main'}`),
     publicPath: '/',
     filename: '[name].[chunkhash].js',
     sourceMapFilename: '[file].map'
@@ -157,7 +160,13 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
   const module = {
     rules: [{
         test: /\.tsx?$/,
-        use: ['awesome-typescript-loader']
+        use: [{
+            loader: 'babel-loader'
+          },
+          {
+            loader: 'ts-loader'
+          }
+        ]
       },
       {
         test: /\.js$/,
@@ -257,5 +266,8 @@ export default (isDemo, branchName, isDev = false, isMockData = false, isStaging
     plugins,
     module,
   };
+  if (!isDev) {
+    config.externals = externals;
+  }
   return config;
 };
