@@ -1,5 +1,5 @@
 {
-  "name": "@creditiq/web-base",
+  "name": "grid-react-adapter",
   "version": "1.0.0",
   "main": "dist/main.js",
   "typings": "dist/components/index.d.ts",
@@ -28,14 +28,14 @@
     "build:component:watch": "babel-node tools/buildComponent.js --watch",
     "build:server": "npm run build && npm run open:dist",
     "test": "jest --config jest.single.config.js",
-    "test:watch": "CI=true jest --watch"
+    "test:watch": "CI=true jest --watch",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creditiq/web-base.git"
+    "url": "git+https://github.com/grid-grid/grid-react-adapter.git"
   },
   "dependencies": {
-    "@creditiq/style": "^2.0.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "classnames": "^2.2.5",
     "lodash": "^4.17.4",
@@ -83,6 +83,7 @@
     "postcss-loader": "^2.0.6",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
+    "semantic-release": "^8.0.3",
     "source-map-loader": "~0.2.0",
     "style-loader": "^0.18.2",
     "transform-ts-paths": "^1.0.1",
@@ -113,6 +114,13 @@
     }
   },
   "ciq": {
-    "upstream": "git@github.com:creditiq/base.git"
+    "upstream": "git@github.com:creditiq/web-base.git"
+  },
+  "release": {
+    "verifyConditions": "condition-circle",
+
+    "fallbackTags": {
+      "next": "latest"
+    }
   }
 }

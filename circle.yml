@@ -1,0 +1,9 @@
+dependencies:
+  pre:
+    - npm install -g npm@5.x.x
+deployment:
+  master:
+    branch: [ next]
+    commands:
+      - npm run semantic-release
+    
