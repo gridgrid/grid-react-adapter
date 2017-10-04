@@ -118,7 +118,7 @@
   },
   "release": {
     "verifyConditions": "condition-circle",
-
+    "branch": "next",
     "fallbackTags": {
       "next": "latest"
     }

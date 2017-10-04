@@ -3,7 +3,7 @@ dependencies:
     - npm install -g npm@5.x.x
 deployment:
   master:
-    branch: [ next]
+    branch: [master, next]
     commands:
       - npm run semantic-release
     
