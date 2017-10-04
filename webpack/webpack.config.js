@@ -143,8 +143,10 @@ export default (opts) => {
   const extractTextOptionsNonGlobal = {
     fallback: 'style-loader',
     use: [{
-        loader: 'css-loader',
+        loader: 'typings-for-css-modules-loader',
         options: {
+          namedExport: true,
+          camelCase: true,
           sourceMap: true,
           modules: true,
           importLoaders: 1,
@@ -167,8 +169,16 @@ export default (opts) => {
 
   // yaya it's dirty but it's also DRY. DRY and dirty suckas.
   const extractTextOptionsGlobal = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
-  extractTextOptionsGlobal.use[0].options.modules = false;
   const extractTextOptionsCss = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
+  extractTextOptionsCss.use[0] = extractTextOptionsGlobal.use[0] = {
+    loader: 'css-loader',
+    options: {
+      modules: false,
+      sourceMap: true,
+      importLoaders: 1,
+      localIdentName: '[name]__[local]___[hash:base64:5]'
+    }
+  };
   extractTextOptionsCss.use.splice(extractTextOptionsCss.use.indexOf('sass-loader'), 1);
 
   const module = {

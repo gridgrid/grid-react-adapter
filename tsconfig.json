@@ -17,6 +17,7 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
+      "*": ["node_modules/@types/*", "*"],
       "@src/*": ["./src/*"],
       "@cmpts/*": ["./src/components/*"]
     }

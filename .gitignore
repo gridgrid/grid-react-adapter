@@ -54,3 +54,6 @@ tmp
 *.tgz
 build/
 dist
+
+*.scss.d.ts
+*.css.d.ts
