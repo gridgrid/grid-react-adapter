@@ -85,7 +85,7 @@
     "sass-loader": "^6.0.6",
     "source-map-loader": "~0.2.0",
     "style-loader": "^0.18.2",
-    "transform-ts-paths": "^1.0.0",
+    "transform-ts-paths": "^1.0.1",
     "ts-jest": "^20.0.11",
     "ts-loader": "^2.3.7",
     "tslint": "^5.4.2",
