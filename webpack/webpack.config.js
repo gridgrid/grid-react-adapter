@@ -44,7 +44,13 @@ export default (opts) => {
     publicPath: '/',
     filename: '[name].js',
     sourceMapFilename: '[file].map',
-    libraryTarget: 'commonjs2'
+    library: {
+      root: "GridReactAdapter",
+      amd: "grid-react-adapter",
+      commonjs: "grid-react-adapter",
+      commonjs2: "grid-react-adapter"
+    },
+    libraryTarget: "umd"
   } : {
     path: path.resolve(distPath, `${isDemo ? 'demo' : 'main'}`),
     publicPath: '/',
