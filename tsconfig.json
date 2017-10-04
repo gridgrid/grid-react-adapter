@@ -19,7 +19,10 @@
     "paths": {
       "*": ["node_modules/@types/*", "*"],
       "@src/*": ["./src/*"],
-      "@cmpts/*": ["./src/components/*"]
+      "@cmpts/*": ["./src/components/*"],
+      "global.scss": ["./src/styles/global.scss"],
+      "_variables.scss": ["./src/styles/_variables.scss"],
+      "_mixins.scss": ["./src/styles/_mixins.scss"]
     }
   },
   "compileOnSave": false,

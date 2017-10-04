@@ -1,3 +1,3 @@
 document.getElementById('app');
 
-import './styles/global.scss';
+import 'global.scss';

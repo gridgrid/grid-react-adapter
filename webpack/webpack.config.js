@@ -15,7 +15,7 @@ import {
 import externals from './externals';
 import transformTsConfigPaths from '../transformTSPaths';
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const globalSassRegex = /(global|toastr)\.scss$/;
+const globalSassRegex = /(toastr)\.scss$/;
 const aliases = transformTsConfigPaths();
 
 export default (opts) => {
@@ -302,6 +302,9 @@ export default (opts) => {
     config.externals = {
       ...(isLibrary && {
         'react': 'commonjs react', // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+        'global.scss': 'commonjs global.scss',
+        '_variables.scss': 'commonjs _variables.scss',
+        '_mixins.scss': 'commonjs _mixins.scss',
       }),
       ...externals
     };

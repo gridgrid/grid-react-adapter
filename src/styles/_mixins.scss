@@ -1,4 +1,4 @@
-@import "~@creditiq/style/src/styles/global.scss";
+@import "~@creditiq/style/src/styles/_mixins.scss";
 // NOTE: if authoring a component you probably don't want to put anything here is it will be overridden by whatever app is using you
-// instead consider using local.scss or something 
+// instead consider using _localMixins.scss or something 
 // although ideally you would not be adding global style anyway but instead use module local css modules
