@@ -208,6 +208,7 @@ export default (opts) => {
       },
       {
         test: /\.js$/,
+        enforce: 'pre',
         use: ["source-map-loader"]
       },
       // this is just for libraries that are imported ATL doesn't transform those

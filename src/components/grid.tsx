@@ -2,27 +2,37 @@
 import * as React from 'react';
 import { Component, Props } from 'react';
 
-import { create, IGridCore } from 'grid';
+import { create, Grid, IGridDimension } from 'grid';
+import { IColDescriptor, IRowColDescriptor, IRowDescriptor } from 'grid/dist/modules/abstract-row-col-model';
 
 export interface IGridProps extends Props<void> {
-
+  rows: Array<Partial<IRowDescriptor>>;
+  cols: Array<Partial<IColDescriptor>>;
 }
 
 export interface IGridState { }
 
-export class Grid extends Component<IGridProps, IGridState> {
-  grid?: IGridCore;
+export class ReactGrid extends Component<IGridProps, IGridState> {
+  grid: Grid;
   gridContainer: HTMLElement;
   reactContainer: HTMLElement | null;
+  rows?: IRowColDescriptor[];
+  cols?: IRowColDescriptor[];
   constructor() {
     super();
     this.gridContainer = document.createElement('div');
-  }
-
-  getGridInstance() {
-    if (!this.grid) {
-      this.grid = create();
-    }
+    this.gridContainer.style.position = 'absolute';
+    this.gridContainer.style.top = '0';
+    this.gridContainer.style.left = '0';
+    this.gridContainer.style.height = '100%';
+    this.gridContainer.style.width = '100%';
+    this.grid = create();
+    this.grid.dataModel.get = (dataRow, dataCol) =>
+      ({
+        value: 3, formatted: `row ${this.grid.rows.converters.data.toVirtual(dataRow)}
+      col ${this.grid.cols.converters.data.toVirtual(dataCol)}`
+      });
+    this.grid.dataModel.getHeader = (dataRow, dataCol) => ({ value: 3, formatted: `row ${dataRow} col ${dataCol}` });
   }
 
   ensureGridContainerInDOM() {
@@ -31,21 +41,45 @@ export class Grid extends Component<IGridProps, IGridState> {
     }
   }
 
-  componentDidMount() {
-    this.ensureGridContainerInDOM();
+  reflectNewRowsOrCols(
+    previousDescriptors: IRowColDescriptor[] | undefined,
+    nextDescriptors: Array<Partial<IRowColDescriptor>>,
+    dim: IGridDimension) {
+    if (previousDescriptors) {
+      previousDescriptors.forEach((row) => { dim.rowColModel.remove(row); });
+    }
+    dim.rowColModel.add(nextDescriptors.map((newRow) => {
+      const row = dim.rowColModel.create();
+      Object.assign(row, newRow);
+      return row;
+    }));
   }
 
+  shouldComponentUpdate(nextProps: IGridProps) {
+    if (this.props.rows !== nextProps.rows) {
+      this.reflectNewRowsOrCols(this.rows, nextProps.rows, this.grid.rows);
+    }
+    if (this.props.cols !== nextProps.cols) {
+      this.reflectNewRowsOrCols(this.cols, nextProps.cols, this.grid.cols);
+    }
+    return false;
+  }
+
+  componentDidMount() {
+    this.ensureGridContainerInDOM();
+    this.grid.build(this.gridContainer);
+    this.reflectNewRowsOrCols(this.rows, this.props.rows, this.grid.rows);
+    this.reflectNewRowsOrCols(this.cols, this.props.cols, this.grid.cols);
+  }
+
+  // we return false from should update but react may ignore our hint in the future
   componentDidUpdate() {
     this.ensureGridContainerInDOM();
   }
 
   render() {
     return (
-      <div
-        ref={(elem) => { this.reactContainer = elem; }}
-      >
-        Grid
-      </div>
+      <div ref={(elem) => { this.reactContainer = elem; }} />
     );
   }
 }
