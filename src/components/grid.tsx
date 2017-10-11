@@ -27,12 +27,6 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     this.gridContainer.style.height = '100%';
     this.gridContainer.style.width = '100%';
     this.grid = create();
-    this.grid.dataModel.get = (dataRow, dataCol) =>
-      ({
-        value: 3, formatted: `row ${this.grid.rows.converters.data.toVirtual(dataRow)}
-      col ${this.grid.cols.converters.data.toVirtual(dataCol)}`
-      });
-    this.grid.dataModel.getHeader = (dataRow, dataCol) => ({ value: 3, formatted: `row ${dataRow} col ${dataCol}` });
   }
 
   ensureGridContainerInDOM() {
