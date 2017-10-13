@@ -42,19 +42,21 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     if (previousDescriptors) {
       previousDescriptors.forEach((row) => { dim.rowColModel.remove(row); });
     }
-    dim.rowColModel.add(nextDescriptors.map((newRow) => {
+    const newRows = nextDescriptors.map((newRow) => {
       const row = dim.rowColModel.create();
       Object.assign(row, newRow);
       return row;
-    }));
+    });
+    dim.rowColModel.add(newRows);
+    return newRows;
   }
 
   shouldComponentUpdate(nextProps: IGridProps) {
     if (this.props.rows !== nextProps.rows) {
-      this.reflectNewRowsOrCols(this.rows, nextProps.rows, this.grid.rows);
+      this.rows = this.reflectNewRowsOrCols(this.rows, nextProps.rows, this.grid.rows);
     }
     if (this.props.cols !== nextProps.cols) {
-      this.reflectNewRowsOrCols(this.cols, nextProps.cols, this.grid.cols);
+      this.cols = this.reflectNewRowsOrCols(this.cols, nextProps.cols, this.grid.cols);
     }
     return false;
   }
@@ -62,8 +64,8 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
   componentDidMount() {
     this.ensureGridContainerInDOM();
     this.grid.build(this.gridContainer);
-    this.reflectNewRowsOrCols(this.rows, this.props.rows, this.grid.rows);
-    this.reflectNewRowsOrCols(this.cols, this.props.cols, this.grid.cols);
+    this.rows = this.reflectNewRowsOrCols(this.rows, this.props.rows, this.grid.rows);
+    this.cols = this.reflectNewRowsOrCols(this.cols, this.props.cols, this.grid.cols);
   }
 
   // we return false from should update but react may ignore our hint in the future
