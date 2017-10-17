@@ -4,10 +4,12 @@ import { Component, Props } from 'react';
 
 import { create, Grid, IGridDimension } from 'grid';
 import { IColDescriptor, IRowColDescriptor, IRowDescriptor } from 'grid/dist/modules/abstract-row-col-model';
+import { RowLoader } from 'grid/dist/modules/virtualized-data-model';
 
 export interface IGridProps extends Props<void> {
   rows: Array<Partial<IRowDescriptor>>;
   cols: Array<Partial<IColDescriptor>>;
+  loadRows?: RowLoader;
 }
 
 export interface IGridState { }
@@ -18,15 +20,16 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
   reactContainer: HTMLElement | null;
   rows?: IRowColDescriptor[];
   cols?: IRowColDescriptor[];
-  constructor() {
-    super();
+
+  constructor(props: IGridProps) {
+    super(props);
     this.gridContainer = document.createElement('div');
     this.gridContainer.style.position = 'absolute';
     this.gridContainer.style.top = '0';
     this.gridContainer.style.left = '0';
     this.gridContainer.style.height = '100%';
     this.gridContainer.style.width = '100%';
-    this.grid = create();
+    this.grid = create({ loadRows: props.loadRows });
   }
 
   ensureGridContainerInDOM() {
