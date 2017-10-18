@@ -17,7 +17,9 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": [
+        "./src/*"
+      ]
     }
   },
   "compileOnSave": false,
