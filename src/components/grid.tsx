@@ -4,11 +4,12 @@ import { Component, Props } from 'react';
 
 import { create, Grid, IGridDimension } from 'grid';
 import { IColDescriptor, IRowColDescriptor, IRowDescriptor } from 'grid/dist/modules/abstract-row-col-model';
-import { RowLoader } from 'grid/dist/modules/virtualized-data-model';
+import { IGridDataResult, RowLoader } from 'grid/dist/modules/data-model';
 
 export interface IGridProps extends Props<void> {
   rows: Array<Partial<IRowDescriptor>>;
   cols: Array<Partial<IColDescriptor>>;
+  data?: Array<Array<IGridDataResult<any>>>;
   loadRows?: RowLoader;
 }
 
@@ -60,6 +61,15 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     }
     if (this.props.cols !== nextProps.cols) {
       this.cols = this.reflectNewRowsOrCols(this.cols, nextProps.cols, this.grid.cols);
+    }
+
+    if (this.props.data !== nextProps.data && nextProps.data) {
+      nextProps.data.forEach((row, dataRowIndex) => {
+        if (this.rows) {
+          this.rows[this.grid.rows.converters.data.toVirtual(dataRowIndex)].data = row;
+        }
+      });
+      this.grid.dataModel.setDirty();
     }
     return false;
   }
