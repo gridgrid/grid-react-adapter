@@ -91,6 +91,7 @@
     "tslint": "^5.4.2",
     "tslint-eslint-rules": "^4.1.1",
     "tslint-react": "^3.0.0",
+    "tslint-language-service": "^0.9.6",
     "typescript": "^2.3.4",
     "typings-for-css-modules-loader": "^1.6.1",
     "validate-commit-msg": "^2.14.0",
