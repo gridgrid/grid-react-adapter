@@ -69,7 +69,9 @@
     "no-unused-expression": true,
     "no-duplicate-imports": false,
     "no-submodule-imports": false,
-    "no-unused-variable": true,
+    "no-unused-variable": [true, {
+      "ignore-pattern": "^_"
+    }],
     "no-use-before-declare": false,
     "no-var-keyword": true,
     "no-var-requires": false,
