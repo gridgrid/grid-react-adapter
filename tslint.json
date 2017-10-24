@@ -19,7 +19,8 @@
     "forin": true,
     "indent": [
       true,
-      "spaces"
+      "spaces",
+      2
     ],
     "interface-name": [true, "always-prefix"],
     "interface-over-type-literal": false,
