@@ -32,12 +32,9 @@
       140
     ],
     "member-access": false,
-    "member-ordering": [
-      true,
-      "public-before-private",
-      "static-before-instance",
-      "variables-before-functions"
-    ],
+    "member-ordering": [true, {
+      "order": "statics-first"
+    }],
     "no-any": false,
     "no-arg": true,
     "no-bitwise": true,
@@ -95,7 +92,9 @@
     "radix": true,
     "semicolon": [true, "always"],
     // "sort-imports": true, //NO this is the worst
-    "space-before-function-paren": [true, "anonymous", "always"],
+    "space-before-function-paren": [true, {
+      "anonymous": "always"
+    }],
     "switch-default": false,
     "trailing-comma": [
       false,
