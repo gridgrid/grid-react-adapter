@@ -30,8 +30,8 @@ export default (opts) => {
   const useStagingUrls = !!isStagingApi || (!isDev && branchName !== 'prod');
   const entry = [
     'whatwg-fetch',
-    ...(isDev && ['./src/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
-    isLibrary ? './src/components/index' : './src/index'
+    ...(isDev && ['./src/app/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
+    isLibrary ? './src/lib/index' : './src/app/index'
   ];
   const distPath = path.resolve(__dirname, `../dist/`);
 
@@ -116,7 +116,7 @@ export default (opts) => {
       allChunks: true
     }),
     new HtmlWebpackPlugin({ // Create HTML file that includes references to bundled CSS and JS.
-      template: '!!ejs-compiled-loader!src/index.ejs',
+      template: '!!ejs-compiled-loader!src/app/index.ejs',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
