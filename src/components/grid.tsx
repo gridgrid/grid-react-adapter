@@ -2,9 +2,16 @@
 import * as React from 'react';
 import { Component } from 'react';
 
-import { create, Grid, IGridDimension, IGridOpts } from 'grid';
-import { IColDescriptor, IRowColDescriptor, IRowDescriptor } from 'grid/dist/modules/abstract-row-col-model';
-import { IGridDataResult } from 'grid/dist/modules/data-model';
+import {
+  create,
+  Grid,
+  IColDescriptor,
+  IGridDataResult,
+  IGridDimension,
+  IGridOpts,
+  IRowColDescriptor,
+  IRowDescriptor
+} from 'grid';
 
 export interface IGridProps extends IGridOpts {
   rows: Array<Partial<IRowDescriptor>>;
