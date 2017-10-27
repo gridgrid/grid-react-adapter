@@ -1,16 +1,15 @@
 // tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
-import { Component, Props } from 'react';
+import { Component } from 'react';
 
-import { create, Grid, IGridDimension } from 'grid';
+import { create, Grid, IGridDimension, IGridOpts } from 'grid';
 import { IColDescriptor, IRowColDescriptor, IRowDescriptor } from 'grid/dist/modules/abstract-row-col-model';
-import { IGridDataResult, RowLoader } from 'grid/dist/modules/data-model';
+import { IGridDataResult } from 'grid/dist/modules/data-model';
 
-export interface IGridProps extends Props<void> {
+export interface IGridProps extends IGridOpts {
   rows: Array<Partial<IRowDescriptor>>;
   cols: Array<Partial<IColDescriptor>>;
   data?: Array<Array<IGridDataResult<any>>>;
-  loadRows?: RowLoader;
 }
 
 export interface IGridState { }
@@ -28,7 +27,8 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     this.gridContainer.style.left = '0';
     this.gridContainer.style.height = '100%';
     this.gridContainer.style.width = '100%';
-    this.grid = create({ loadRows: props.loadRows });
+    const { rows, cols, data, ...gridOpts } = this.props;
+    this.grid = create(gridOpts);
   }
 
   ensureGridContainerInDOM() {
