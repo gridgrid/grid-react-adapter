@@ -2,7 +2,7 @@
   "name": "@creditiq/web-base",
   "version": "1.0.0",
   "main": "dist/main.js",
-  "typings": "dist/components/index.d.ts",
+  "typings": "dist/lib/index.d.ts",
   "scripts": {
     "commitmsg": "validate-commit-msg",
     "preversion": "npm run build:component",
@@ -23,9 +23,9 @@
     "pretest": "npm run compile",
     "prebuild": "npm run clean && npm run test",
     "build": "babel-node tools/build.js",
-    "prebuild:component": "npm run prebuild",
-    "build:component": "babel-node tools/buildComponent.js",
-    "build:component:watch": "babel-node tools/buildComponent.js --watch",
+    "prebuild:lib": "npm run prebuild",
+    "build:lib": "babel-node tools/buildLib.js",
+    "build:lib:watch": "babel-node tools/buildLib.js --watch",
     "build:server": "npm run build && npm run open:dist",
     "test": "jest --config jest.single.config.js",
     "test:watch": "CI=true jest --watch"
