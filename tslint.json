@@ -55,6 +55,7 @@
     "no-empty": true,
     "no-empty-interface": false,
     "no-eval": true,
+    "no-implicit-dependencies": [false],
     "no-inferrable-types": [false],
     "no-internal-module": true,
     "no-null-keyword": false,
@@ -95,6 +96,7 @@
     "space-before-function-paren": [true, {
       "anonymous": "always"
     }],
+    "space-within-parens": false,
     "switch-default": false,
     "trailing-comma": [
       false,
@@ -134,7 +136,7 @@
       "ban-keywords"
     ],
     "whitespace": [
-      true,
+      false,
       "check-branch",
       "check-decl",
       "check-operator",
