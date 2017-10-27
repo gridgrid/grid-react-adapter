@@ -59,7 +59,7 @@ export default (opts) => {
       failPlugin
     ] || []),
 
-    ...(!isDev && [
+    ...(!isDev && !isLibrary && [
       // Hash the files using MD5 so that their names change when the content changes.
       new WebpackMd5Hash(),
 
@@ -112,7 +112,7 @@ export default (opts) => {
 
     new CheckerPlugin(),
     new ExtractTextPlugin({
-      filename: isDev ? 'app.css' : '[name].[contenthash].css',
+      filename: isDev ? 'app.css' : `[name]${!isLibrary && '.[contenthash]' || ''}.css`,
       allChunks: true
     }),
     new HtmlWebpackPlugin({ // Create HTML file that includes references to bundled CSS and JS.
