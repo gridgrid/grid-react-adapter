@@ -19,8 +19,6 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
   grid: Grid;
   gridContainer: HTMLElement;
   reactContainer: HTMLElement | null;
-  rows?: IRowColDescriptor[];
-  cols?: IRowColDescriptor[];
 
   constructor(props: IGridProps) {
     super(props);
@@ -40,12 +38,10 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
   }
 
   reflectNewRowsOrCols(
-    previousDescriptors: IRowColDescriptor[] | undefined,
     nextDescriptors: Array<Partial<IRowColDescriptor>>,
-    dim: IGridDimension) {
-    if (previousDescriptors) {
-      previousDescriptors.forEach((row) => { dim.rowColModel.remove(row); });
-    }
+    dim: IGridDimension
+  ) {
+    dim.rowColModel.clear(true);
     const newRows = nextDescriptors.map((newRow) => {
       const row = dim.rowColModel.create();
       Object.assign(row, newRow);
@@ -57,17 +53,15 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
 
   shouldComponentUpdate(nextProps: IGridProps) {
     if (this.props.rows !== nextProps.rows) {
-      this.rows = this.reflectNewRowsOrCols(this.rows, nextProps.rows, this.grid.rows);
+      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
     }
     if (this.props.cols !== nextProps.cols) {
-      this.cols = this.reflectNewRowsOrCols(this.cols, nextProps.cols, this.grid.cols);
+      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
     }
 
     if (this.props.data !== nextProps.data && nextProps.data) {
       nextProps.data.forEach((row, dataRowIndex) => {
-        if (this.rows) {
-          this.rows[this.grid.rows.converters.data.toVirtual(dataRowIndex)].data = row;
-        }
+        this.grid.rows.converters.data.get(dataRowIndex).data = row;
       });
       this.grid.dataModel.setDirty();
     }
@@ -77,8 +71,8 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
   componentDidMount() {
     this.ensureGridContainerInDOM();
     this.grid.build(this.gridContainer);
-    this.rows = this.reflectNewRowsOrCols(this.rows, this.props.rows, this.grid.rows);
-    this.cols = this.reflectNewRowsOrCols(this.cols, this.props.cols, this.grid.cols);
+    this.reflectNewRowsOrCols(this.props.rows, this.grid.rows);
+    this.reflectNewRowsOrCols(this.props.cols, this.grid.cols);
   }
 
   // we return false from should update but react may ignore our hint in the future
