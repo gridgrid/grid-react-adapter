@@ -12,6 +12,7 @@ import createConfig from '../webpack/webpack.config';
 import {
   chalkSuccess
 } from './chalkConfig';
+import historyApiFallback from 'connect-history-api-fallback';
 
 
 import * as yargs from 'yargs';
@@ -44,7 +45,7 @@ browserSync({
     baseDir: 'src',
 
     middleware: [
-
+      historyApiFallback(),
       webpackDevMiddleware(bundler, {
         // Dev middleware can't access config, so we provide publicPath
         publicPath: config.output.publicPath,
