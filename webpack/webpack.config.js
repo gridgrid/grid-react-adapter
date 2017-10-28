@@ -194,7 +194,7 @@ export default (opts) => {
             loader: 'ts-loader',
             options: {
               compilerOptions: {
-                outDir: distPath
+                outDir: './'
               }
             }
           }
