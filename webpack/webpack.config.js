@@ -205,7 +205,6 @@ export default (opts) => {
         enforce: 'pre',
         use: ["source-map-loader"]
       },
-      // this is just for libraries that are imported ATL doesn't transform those
       {
         test: /\.js$/,
         exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
