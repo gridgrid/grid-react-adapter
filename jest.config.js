@@ -19,6 +19,6 @@ module.exports = {
     'js'
   ],
   moduleNameMapper: moduleNameMapper,
-  watchPathIgnorePatterns: ['dist'],
+  watchPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFiles: ['./jest-setup.js'],
 };

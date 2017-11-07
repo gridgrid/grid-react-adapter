@@ -21,7 +21,8 @@
     "forin": true,
     "indent": [
       true,
-      "spaces"
+      "spaces",
+      2
     ],
     "interface-name": [true, "always-prefix"],
     "interface-over-type-literal": false,
@@ -33,12 +34,9 @@
       140
     ],
     "member-access": false,
-    "member-ordering": [
-      true,
-      "public-before-private",
-      "static-before-instance",
-      "variables-before-functions"
-    ],
+    "member-ordering": [true, {
+      "order": "statics-first"
+    }],
     "no-any": false,
     "no-arg": true,
     "no-bitwise": true,
@@ -59,6 +57,7 @@
     "no-empty": true,
     "no-empty-interface": false,
     "no-eval": true,
+    "no-implicit-dependencies": [false],
     "no-inferrable-types": [false],
     "no-internal-module": true,
     "no-null-keyword": false,
@@ -71,7 +70,9 @@
     "no-unused-expression": true,
     "no-duplicate-imports": false,
     "no-submodule-imports": false,
-    "no-unused-variable": true,
+    "no-unused-variable": [true, {
+      "ignore-pattern": "^_"
+    }],
     "no-use-before-declare": false,
     "no-var-keyword": true,
     "no-var-requires": false,
@@ -94,7 +95,10 @@
     "radix": true,
     "semicolon": [true, "always"],
     // "sort-imports": true, //NO this is the worst
-    "space-before-function-paren": [true, "anonymous", "always"],
+    "space-before-function-paren": [true, {
+      "anonymous": "always"
+    }],
+    "space-within-parens": false,
     "switch-default": false,
     "trailing-comma": [
       false,
@@ -134,7 +138,7 @@
       "ban-keywords"
     ],
     "whitespace": [
-      true,
+      false,
       "check-branch",
       "check-decl",
       "check-operator",

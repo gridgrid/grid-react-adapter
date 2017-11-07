@@ -30,8 +30,8 @@ export default (opts) => {
   const useStagingUrls = !!isStagingApi || (!isDev && branchName !== 'prod');
   const entry = [
     'whatwg-fetch',
-    ...(isDev && ['./src/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
-    isLibrary ? './src/components/index' : './src/index'
+    ...(isDev && ['./src/app/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
+    isLibrary ? './src/lib/index' : './src/app/index'
   ];
   const distPath = path.resolve(__dirname, `../dist/`);
 
@@ -65,7 +65,7 @@ export default (opts) => {
       failPlugin
     ] || []),
 
-    ...(!isDev && [
+    ...(!isDev && !isLibrary && [
       // Hash the files using MD5 so that their names change when the content changes.
       new WebpackMd5Hash(),
 
@@ -118,11 +118,11 @@ export default (opts) => {
 
     new CheckerPlugin(),
     new ExtractTextPlugin({
-      filename: isDev ? 'app.css' : '[name].[contenthash].css',
+      filename: isDev ? 'app.css' : `[name]${!isLibrary && '.[contenthash]' || ''}.css`,
       allChunks: true
     }),
     new HtmlWebpackPlugin({ // Create HTML file that includes references to bundled CSS and JS.
-      template: '!!ejs-compiled-loader!src/index.ejs',
+      template: '!!ejs-compiled-loader!src/app/index.ejs',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -200,7 +200,7 @@ export default (opts) => {
             loader: 'ts-loader',
             options: {
               compilerOptions: {
-                outDir: distPath
+                outDir: './'
               }
             }
           }
@@ -211,7 +211,6 @@ export default (opts) => {
         enforce: 'pre',
         use: ["source-map-loader"]
       },
-      // this is just for libraries that are imported ATL doesn't transform those
       {
         test: /\.js$/,
         exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,

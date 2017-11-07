@@ -5,7 +5,7 @@ import _range = require('lodash/range');
 
 require('grid/src/scss/grid.scss');
 
-import { ReactGrid } from '@cmpts/index';
+import { ReactGrid } from '../lib/components';
 const rows = _range(0, 1000).map((_idx) => ({
   data: _range(0, 100).map((colIdx) => ({ formatted: `${_idx}, ${colIdx}` }))
 } as any));
