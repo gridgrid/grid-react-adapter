@@ -40,17 +40,17 @@
     "classnames": "^2.2.5",
     "grid": "^4.4.0",
     "lodash": "^4.17.4",
-    "react": "~15.3.1",
-    "react-dom": "~15.3.1"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
     "@types/jest": "^20.0.8",
     "@types/lodash": "^4.14.76",
     "@types/node": "^7.0.12",
-    "@types/react": "^15.0.27",
+    "@types/react": "^16.0.20",
     "@types/react-addons-test-utils": "^0.14.18",
-    "@types/react-dom": "^15.5.0",
+    "@types/react-dom": "^16.0.2",
     "autoprefixer": "~6.4.0",
     "awesome-typescript-loader": "^3.2.3",
     "babel-cli": "^6.18.0",

@@ -15,7 +15,7 @@ import {
 import externals from './externals';
 import transformTsConfigPaths from '../transformTSPaths';
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const globalSassRegex = /(toastr)\.scss$/;
+const globalSassRegex = /(toastr|grid)\.scss$/;
 const aliases = transformTsConfigPaths();
 
 export default (opts) => {
