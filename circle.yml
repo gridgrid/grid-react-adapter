@@ -6,7 +6,7 @@ dependencies:
     - npm install -g npm@5.x.x
 test:
   override:
-    - npm run build:component
+    - npm run build:lib
 deployment:
   master:
     branch: [master, next]
