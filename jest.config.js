@@ -11,7 +11,7 @@ module.exports = {
     '.(ts|tsx)': '<rootDir>/node_modules/ts-jest/preprocessor.js'
   },
   verbose: true,
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   testRegex: 'src/((.+/)?__tests__/.*|.*\\.(test|spec))\\.(ts|tsx|js)$',
   testPathIgnorePatterns: ['\\.d\\.ts$'],
   moduleFileExtensions: [
@@ -21,5 +21,6 @@ module.exports = {
   ],
   moduleNameMapper: moduleNameMapper,
   watchPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  setupFiles: ['./jest-setup.js'],
+  setupFiles: ['./jest-setup.ts'],
+  setupTestFrameworkScriptFile: './jest-post-setup.ts',
 };

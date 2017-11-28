@@ -58,19 +58,30 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     return newRows;
   }
 
-  shouldComponentUpdate(nextProps: IGridProps) {
-    if (this.props.rows !== nextProps.rows) {
-      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
-    }
-    if (this.props.cols !== nextProps.cols) {
-      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
-    }
+  descriptorsChanged(d1: Array<Partial<IRowColDescriptor>>, d2: Array<Partial<IRowColDescriptor>>) {
+    return d1.length !== d2.length || // different lengths short cut
+      d1.some((descriptor, index) => JSON.stringify(d2[index]) !== JSON.stringify(descriptor));
+  }
 
-    if (this.props.data !== nextProps.data && nextProps.data) {
-      nextProps.data.forEach((row, dataRowIndex) => {
+  handleNewData(data: Array<Array<IGridDataResult<any>>> | undefined) {
+    if (data) {
+      data.forEach((row, dataRowIndex) => {
         this.grid.rows.converters.data.get(dataRowIndex).data = row;
       });
       this.grid.dataModel.setDirty();
+    }
+  }
+
+  shouldComponentUpdate(nextProps: IGridProps) {
+    if (this.descriptorsChanged(this.props.rows, nextProps.rows)) {
+      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
+    }
+    if (this.descriptorsChanged(this.props.cols, nextProps.cols)) {
+      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
+    }
+
+    if (this.props.data !== nextProps.data) {
+      this.handleNewData(nextProps.data);
     }
     return false;
   }
@@ -80,6 +91,7 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     this.grid.build(this.gridContainer);
     this.reflectNewRowsOrCols(this.props.rows, this.grid.rows);
     this.reflectNewRowsOrCols(this.props.cols, this.grid.cols);
+    this.handleNewData(this.props.data);
   }
 
   // we return false from should update but react may ignore our hint in the future
