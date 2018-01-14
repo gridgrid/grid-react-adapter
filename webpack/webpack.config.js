@@ -307,7 +307,12 @@ export default (opts) => {
   if (!isDev) {
     config.externals = {
       ...(isLibrary && {
-        'react': 'commonjs react', // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+        'react': {
+          root: 'React',
+          commonjs2: 'react',
+          commonjs: 'react',
+          amd: 'react'
+        },
         'global.scss': 'commonjs global.scss',
         '_variables.scss': 'commonjs _variables.scss',
         '_mixins.scss': 'commonjs _mixins.scss',
