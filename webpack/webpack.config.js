@@ -50,7 +50,7 @@ export default (opts) => {
       commonjs: "grid-react-adapter",
       commonjs2: "grid-react-adapter"
     },
-    libraryTarget: "umd"
+    libraryTarget: "umd2"
   } : {
     path: path.resolve(distPath, `${isDemo ? 'demo' : 'main'}`),
     publicPath: '/',
@@ -312,6 +312,12 @@ export default (opts) => {
           commonjs2: 'react',
           commonjs: 'react',
           amd: 'react'
+        },
+        'react-dom': {
+          root: 'ReactDOM',
+          commonjs2: 'react-dom',
+          commonjs: 'react-dom',
+          amd: 'react-dom',
         },
         'global.scss': 'commonjs global.scss',
         '_variables.scss': 'commonjs _variables.scss',
