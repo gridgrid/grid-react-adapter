@@ -4,6 +4,7 @@ import { Component, ReactElement } from 'react';
 import * as ReactDOM from 'react-dom';
 
 import {
+  ColModel,
   create,
   Grid,
   IColDescriptor,
@@ -50,14 +51,13 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
 
   reflectNewRowsOrCols(
     nextDescriptors: Array<Partial<IRowColDescriptor>>,
-    dim: IGridDimension,
-    isCols: boolean
+    dim: IGridDimension
   ) {
     dim.rowColModel.clear(true);
     const newDescriptors = nextDescriptors.map((newDescriptor) => {
       const descriptor = dim.rowColModel.create();
       Object.assign(descriptor, newDescriptor);
-      if (isCols) {
+      if (dim.rowColModel instanceof ColModel) {
         descriptor.builder = newDescriptor.builder || this.cellRendererBuilder;
       }
       return descriptor;
@@ -82,10 +82,10 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
 
   shouldComponentUpdate(nextProps: IGridProps) {
     if (this.descriptorsChanged(this.props.rows, nextProps.rows)) {
-      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows, false);
+      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
     }
     if (this.descriptorsChanged(this.props.cols, nextProps.cols)) {
-      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols, true);
+      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
     }
 
     if (this.props.data !== nextProps.data) {
@@ -108,8 +108,8 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
         return element;
       }
     );
-    this.reflectNewRowsOrCols(this.props.rows, this.grid.rows, false);
-    this.reflectNewRowsOrCols(this.props.cols, this.grid.cols, true);
+    this.reflectNewRowsOrCols(this.props.rows, this.grid.rows);
+    this.reflectNewRowsOrCols(this.props.cols, this.grid.cols);
     this.handleNewData(this.props.data);
   }
 
