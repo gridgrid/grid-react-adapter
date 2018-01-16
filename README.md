@@ -1,6 +1,10 @@
 
 # Grid React Adapter
 
+A react wrapper for the grid library: [a link](https://github.com/gridgrid/grid)
+
+For full documentation of features refer to the readme there as well as the typescript types which provide some self documentation. 
+
 ## Example
 
 ```jsx
@@ -61,3 +65,29 @@ class Table extends React.Component {
 }
 ```
   
+In addition to the examples above, the full grid api can be accessed by using a ref like so:
+
+```
+class Component extends React.Component {
+  setGrid = (reactGrid) => {
+     if(!reactGrid){
+       return;
+     }
+    this.grid = reactGrid.grid;
+    this.grid.anyValidGridObjectOrFunction();  
+     // etc..
+
+   }
+  
+  render() {
+    console.log(cols);
+    return (
+      <div>
+        <ReactGrid rows={rows} cols={cols} ref={this.setGrid}/>
+      </div>
+    );
+  }
+}
+```
+
+This is an escape hatch to allow full access to the grid (which is written in pure ts), but we are committed to supporting grid features in a first class React style so please open an issue for anything you think is missing from the React wrapper api and we can discuss the best way to add it in a React-y way.
