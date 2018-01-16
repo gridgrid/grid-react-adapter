@@ -38,6 +38,11 @@ class Table extends React.Component {
 
 ### Props and Formats
 
+- `rows` row options, see Row format
+- `cols` column options, see Col format
+- `ref` access the component and wrapped `grid`
+- `cellRenderer`: `(rowIndex: Int, colIndex: Int, data: *): ReactElement` render prop called for each visible cell
+
 #### Cell Data Format
 
 ```js
@@ -64,10 +69,12 @@ class Table extends React.Component {
   height: 50, // Number
 }
 ```
-  
+
+### Accessing the Grid Instance
+
 In addition to the examples above, the full grid api can be accessed by using a ref like so:
 
-```
+```jsx
 class Component extends React.Component {
   setGrid = (reactGrid) => {
      if(!reactGrid){
