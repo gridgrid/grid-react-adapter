@@ -80,7 +80,6 @@ class Component extends React.Component {
    }
   
   render() {
-    console.log(cols);
     return (
       <div>
         <ReactGrid rows={rows} cols={cols} ref={this.setGrid}/>
