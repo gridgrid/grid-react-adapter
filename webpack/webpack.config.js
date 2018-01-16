@@ -72,7 +72,7 @@ export default (opts) => {
     ] || []),
 
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production'), // Tells React to build in either dev or prod modes. https://facebook.github.io/react/downloads.html (See bottom)
+      'process.env.NODE_ENV': JSON.stringify(isDev ? 'production' : 'production'), // Tells React to build in either dev or prod modes. https://facebook.github.io/react/downloads.html (See bottom)
       __MOCK_DATA__: !!(isDemo || isMockData),
       __DEMO__: !!isDemo,
       __DEV__: !!isDev,
