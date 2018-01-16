@@ -32,6 +32,9 @@ const mockGridCreate = jest.fn((o: any) => ({
   build: mockGridBuild,
   rows: mockRowDim,
   cols: mockColDim,
+  colModel: {
+    createBuilder: jest.fn()
+  },
   dataModel: {
     setDirty: mockDataSetDirty
   }
