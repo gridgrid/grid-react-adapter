@@ -1,6 +1,14 @@
 import * as React from 'react';
 
 import { IRowColDescriptor } from 'grid';
+import * as grid from 'grid';
+
+import _merge = require('lodash/merge');
+
+const mockReactDomRender = jest.fn();
+jest.mock('react-dom', () => ({
+  render: mockReactDomRender
+}));
 
 const mockDataSet = jest.fn();
 const mockDataGet = jest.fn();
@@ -25,7 +33,7 @@ const mockDim = () => ({
   }
 });
 const mockRowDim = mockDim();
-const mockColDim = mockDim();
+const mockColDim = _merge({}, mockDim(), { rowColModel: { col: jest.fn() } });
 const mockDataSetDirty = jest.fn();
 const mockGridBuild = jest.fn((o: any) => ({}));
 const mockGridCreate = jest.fn((o: any) => ({
@@ -33,17 +41,15 @@ const mockGridCreate = jest.fn((o: any) => ({
   rows: mockRowDim,
   cols: mockColDim,
   colModel: {
-    createBuilder: jest.fn()
+    createBuilder: (render: any, update: any): any => ({
+      render, update
+    })
   },
   dataModel: {
     setDirty: mockDataSetDirty
   }
 }));
-jest.mock('grid', () => ({
-  create: mockGridCreate
-}));
-
-import * as grid from 'grid';
+(grid.create as any) = mockGridCreate;
 
 import { mount, shallow } from 'enzyme';
 import { ReactGrid } from '../grid';
@@ -55,6 +61,10 @@ beforeEach(() => {
   mockRowDim.rowColModel.clear.mockClear();
   mockRowDim.rowColModel.add.mockClear();
   mockRowDim.rowColModel.create.mockClear();
+  mockColDim.converters.data.get.mockClear();
+  mockColDim.rowColModel.clear.mockClear();
+  mockColDim.rowColModel.add.mockClear();
+  mockColDim.rowColModel.create.mockClear();
   mockDataSetDirty.mockClear();
   mockDataGet.mockClear();
   mockDataSet.mockClear();
@@ -111,8 +121,8 @@ it('should add the supplied rows and cols to the grid', () => {
   const reactGrid = shallow(
     <ReactGrid rows={rows} cols={cols} />
   );
-  expect(mockRowDim.rowColModel.add).toHaveBeenCalledWith(rows);
-  expect(mockColDim.rowColModel.add).toHaveBeenCalledWith(cols);
+  expect(mockRowDim.rowColModel.add.mock.calls[0][0]).toMatchObject(rows);
+  expect(mockColDim.rowColModel.add.mock.calls[0][0]).toMatchObject(cols);
 });
 
 it('should not call add if the supplied rows and cols havent changed functionally', () => {
@@ -194,4 +204,21 @@ it('should re-supply data to the grid IFF the ref has changed', () => {
   reactGrid.setProps({ data, rows, cols });
   expect(mockRowDim.converters.data.get).not.toHaveBeenCalled();
   expect(mockDataSet).not.toHaveBeenCalled();
+});
+
+it('should use a colBuilder to supply React rendered content to the grid via cellRenderer prop', () => {
+  const rows = [{ header: true }, { height: 4 }];
+  const cols = [{ fixed: true }, { width: 4 }];
+  const a = <a />;
+  const cellRenderer = jest.fn().mockReturnValue(a);
+  const reactGrid = mount(
+    <ReactGrid rows={rows} cols={cols} cellRenderer={cellRenderer} />
+  );
+  const gridCols = mockColDim.rowColModel.add.mock.calls[0][0];
+  const cellRendererBuilder = gridCols[0].builder;
+  const rendered = cellRendererBuilder.render();
+  expect(rendered).toBeDefined();
+  expect(cellRendererBuilder.update(rendered, { virtualRow: 1, virtualCol: 2, data: { formatted: 'poo' } })).toBe(rendered);
+  expect(cellRenderer).toHaveBeenCalledWith(1, 2, { formatted: 'poo' });
+  expect(mockReactDomRender).toHaveBeenCalledWith(a, rendered);
 });

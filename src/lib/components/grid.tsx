@@ -57,7 +57,7 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     const newDescriptors = nextDescriptors.map((newDescriptor) => {
       const descriptor = dim.rowColModel.create();
       Object.assign(descriptor, newDescriptor);
-      if (dim.rowColModel instanceof ColModel) {
+      if ((dim.rowColModel as ColModel).col !== undefined) {
         descriptor.builder = newDescriptor.builder || this.cellRendererBuilder;
       }
       return descriptor;
