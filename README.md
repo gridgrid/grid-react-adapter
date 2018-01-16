@@ -1,7 +1,7 @@
 
 # Grid React Adapter
 
-A react wrapper for the grid library: [a link](https://github.com/gridgrid/grid)
+A react wrapper for the [grid](https://github.com/gridgrid/grid) library
 
 For full documentation of features refer to the readme there as well as the typescript types which provide some self documentation. 
 
