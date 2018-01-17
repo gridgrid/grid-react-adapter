@@ -20,7 +20,7 @@ export interface IGridProps extends IGridOpts {
   rows: Array<Partial<IRowDescriptor>>;
   cols: Array<Partial<IColDescriptor>>;
   data?: Array<Array<IGridDataResult<any>>>;
-  cellRenderer?(virtualRow: number, virtualCol: number, data: IGridDataResult<any>): ReactElement<any> | string;
+  cellRenderer?(virtualRow: number, virtualCol: number, data: IGridDataResult<any>): ReactElement<any> | string | undefined;
 }
 
 export interface IGridState { }
