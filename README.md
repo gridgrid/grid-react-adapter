@@ -41,7 +41,7 @@ class Table extends React.Component {
 - `rows` row options, see Row format
 - `cols` column options, see Col format
 - `ref` access the component and wrapped `grid`
-- `cellRenderer`: `(rowIndex: Int, colIndex: Int, data: *): ReactElement` render prop called for each visible cell
+- `cellRenderer`: `(rowIndex: number, colIndex: number, data: IGridDataResult) => ReactElement<any> | string | undefined` render prop called for each visible cell
 
 #### Cell Data Format
 
