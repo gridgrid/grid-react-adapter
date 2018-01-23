@@ -43,11 +43,36 @@ class Table extends React.Component {
 - `ref` access the component and wrapped `grid`
 - `cellRenderer`: `(rowIndex: number, colIndex: number, data: IGridDataResult) => ReactElement<any> | string | undefined` render prop called for each visible cell
 
+
+Props derived form the core grid options object:
+```
+{
+    // controls whether the scroll is smooth or snaps to cell boundaries
+    snapToCell?: boolean; 
+    
+    // setting to true will enable the editModel to function, which by default is text only editing
+    allowEdit?: boolean; 
+    
+    /* a function the grid calls to let you know it thinks you should fetch more data 
+     based on the current scroll position, called when using the default datamodel */
+    loadRows?: RowLoader; // (rowIndexes : number[]) => void
+    
+     // options for column specific behaviors
+    col?: {
+       // disables the drag and drop column reordering functionality
+        disableReorder?: boolean; 
+    };
+}
+```
 #### Cell Data Format
 
 ```js
 {
-  formatted: 'formatted string' // String
+ // for your own reference or mainly for copy paste to enable pasting of rich data beyond just the string representation
+  value? : any 
+  
+  // the display representation of the value for this cell
+  formatted: string 
 }
 ```
 
