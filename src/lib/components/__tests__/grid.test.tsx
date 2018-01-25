@@ -225,8 +225,9 @@ it('should use a colBuilder to supply React rendered content to the grid via cel
   const cellRendererBuilder = gridCols[0].builder;
   const rendered = cellRendererBuilder.render();
   expect(rendered).toBeDefined();
-  expect(cellRendererBuilder.update(rendered, { virtualRow: 1, virtualCol: 2, data: { formatted: 'poo' } })).toBe(rendered);
-  expect(cellRenderer).toHaveBeenCalledWith(1, 2, { formatted: 'poo' });
+  const ctx = { virtualRow: 1, virtualCol: 2, data: { formatted: 'poo' } };
+  expect(cellRendererBuilder.update(rendered, ctx)).toBe(rendered);
+  expect(cellRenderer).toHaveBeenCalledWith(ctx);
   expect(mockReactDomRender).toHaveBeenCalledWith(a, rendered);
 });
 
@@ -242,8 +243,9 @@ it('should use a rowBuilder to supply React rendered content to the grid via hea
   const cellRendererBuilder = gridRows[0].builder;
   const rendered = cellRendererBuilder.render();
   expect(rendered).toBeDefined();
-  expect(cellRendererBuilder.update(rendered, { virtualRow: 0, virtualCol: 1, data: { formatted: 'poo' } })).toBe(rendered);
-  expect(cellRenderer).toHaveBeenCalledWith(0, 1, { formatted: 'poo' });
+  const context = { virtualRow: 0, virtualCol: 1, data: { formatted: 'poo' } };
+  expect(cellRendererBuilder.update(rendered, context)).toBe(rendered);
+  expect(cellRenderer).toHaveBeenCalledWith(context);
   expect(mockReactDomRender).toHaveBeenCalledWith(a, rendered);
 });
 

@@ -41,8 +41,8 @@ class Table extends React.Component {
 - `rows` row options, see Row format
 - `cols` column options, see Col format
 - `ref` access the component and wrapped `grid`
-- `cellRenderer`: `(rowIndex: number, colIndex: number, data: IGridDataResult) => ReactElement<any> | string | undefined` render prop called for each visible cell
-- `headerCellRenderer` : `(virtualRow: number, virtualCol: number, data: IGridDataResult<any>) => ReactElement<any> | string | undefined` render prop called for each visible header cell
+- `cellRenderer`: `(context : {virtualRow: number, virtualCol: number, data: IGridDataResult<any>}) => ReactElement<any> | string | undefined` render prop called for each visible cell (where cell doesn't include headers)
+- `headerCellRenderer` : `(context : {virtualRow: number, virtualCol: number, data: IGridDataResult<any>}) => ReactElement<any> | string | undefined` render prop called for each visible header cell
 
 
 Props derived form the core grid options object:
