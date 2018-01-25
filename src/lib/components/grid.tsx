@@ -65,7 +65,7 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
         descriptor.builder = newDescriptor.builder || this.cellRendererBuilder;
       }
 
-      if ((dim.rowColModel as RowModel).row !== undefined) {
+      if ((dim.rowColModel as RowModel).row !== undefined && newDescriptor.header) {
         descriptor.builder = newDescriptor.builder || this.headerCellRendererBuilder;
       }
       return descriptor;
