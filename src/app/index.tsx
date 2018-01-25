@@ -23,7 +23,11 @@ const renderer = (row: number, col: number, data: { formatted: string }) => {
   return data.formatted;
 };
 
+const headerRenderer = (_row: number, col: number, data: { formatted: string }) => {
+  return col % 2 ? <b><i>{data.formatted}</i></b> : undefined;
+};
+
 render(
-  <ReactGrid rows={rows} cols={cols} cellRenderer={renderer} />,
+  <ReactGrid rows={rows} cols={cols} cellRenderer={renderer} headerCellRenderer={headerRenderer} />,
   document.getElementById('app')
 );
