@@ -7,20 +7,23 @@ import {
   ColModel,
   create,
   Grid,
+  IBuilderUpdateContext,
   IColDescriptor,
   IGridDataResult,
   IGridDimension,
   IGridOpts,
   IRowColBuilder,
   IRowColDescriptor,
-  IRowDescriptor
+  IRowDescriptor,
+  RowModel
 } from 'grid';
 
 export interface IGridProps extends IGridOpts {
   rows: Array<Partial<IRowDescriptor>>;
   cols: Array<Partial<IColDescriptor>>;
   data?: Array<Array<IGridDataResult<any>>>;
-  cellRenderer?(virtualRow: number, virtualCol: number, data: IGridDataResult<any>): ReactElement<any> | string | undefined;
+  cellRenderer?(context: IBuilderUpdateContext): ReactElement<any> | string | undefined;
+  headerCellRenderer?(context: IBuilderUpdateContext): ReactElement<any> | string | undefined;
 }
 
 export interface IGridState { }
@@ -28,6 +31,7 @@ export interface IGridState { }
 export class ReactGrid extends Component<IGridProps, IGridState> {
   grid: Grid;
   cellRendererBuilder: IRowColBuilder | undefined;
+  headerCellRendererBuilder: IRowColBuilder | undefined;
   gridContainer: HTMLElement;
   reactContainer: HTMLElement | null;
 
@@ -59,6 +63,10 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
       Object.assign(descriptor, newDescriptor);
       if ((dim.rowColModel as ColModel).col !== undefined) {
         descriptor.builder = newDescriptor.builder || this.cellRendererBuilder;
+      }
+
+      if ((dim.rowColModel as RowModel).row !== undefined) {
+        descriptor.builder = newDescriptor.builder || this.headerCellRendererBuilder;
       }
       return descriptor;
     });
@@ -99,8 +107,24 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     this.grid.build(this.gridContainer);
     this.cellRendererBuilder = this.grid.colModel.createBuilder(
       () => document.createElement('div'),
-      (element, { data, virtualCol, virtualRow }) => {
-        const rendered = this.props.cellRenderer && this.props.cellRenderer(virtualRow, virtualCol, data);
+      (element, context) => {
+        const rendered = this.props.cellRenderer && this.props.cellRenderer(context);
+        if (!element || !rendered || typeof rendered === 'string') {
+          return undefined;
+        }
+        ReactDOM.render(rendered, element);
+        return element;
+      }
+    );
+
+    this.headerCellRendererBuilder = this.grid.rowModel.createBuilder(
+      () => document.createElement('div'),
+      (element, context) => {
+        const { virtualRow } = context;
+        if (virtualRow >= this.grid.rows.rowColModel.numHeaders()) {
+          return undefined;
+        }
+        const rendered = this.props.headerCellRenderer && this.props.headerCellRenderer(context);
         if (!element || !rendered || typeof rendered === 'string') {
           return undefined;
         }

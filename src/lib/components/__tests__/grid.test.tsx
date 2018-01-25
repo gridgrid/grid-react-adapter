@@ -29,10 +29,11 @@ const mockDim = () => ({
   rowColModel: {
     clear: jest.fn(),
     add: jest.fn(),
-    create: jest.fn(makeDescriptor)
+    create: jest.fn(makeDescriptor),
+    numHeaders: jest.fn()
   }
 });
-const mockRowDim = mockDim();
+const mockRowDim = _merge({}, mockDim(), { rowColModel: { row: jest.fn() } });
 const mockColDim = _merge({}, mockDim(), { rowColModel: { col: jest.fn() } });
 const mockDataSetDirty = jest.fn();
 const mockGridBuild = jest.fn((o: any) => ({}));
@@ -41,6 +42,11 @@ const mockGridCreate = jest.fn((o: any) => ({
   rows: mockRowDim,
   cols: mockColDim,
   colModel: {
+    createBuilder: (render: any, update: any): any => ({
+      render, update
+    })
+  },
+  rowModel: {
     createBuilder: (render: any, update: any): any => ({
       render, update
     })
@@ -68,6 +74,7 @@ beforeEach(() => {
   mockDataSetDirty.mockClear();
   mockDataGet.mockClear();
   mockDataSet.mockClear();
+  mockReactDomRender.mockClear();
 });
 
 it('should render', () => {
@@ -218,7 +225,45 @@ it('should use a colBuilder to supply React rendered content to the grid via cel
   const cellRendererBuilder = gridCols[0].builder;
   const rendered = cellRendererBuilder.render();
   expect(rendered).toBeDefined();
-  expect(cellRendererBuilder.update(rendered, { virtualRow: 1, virtualCol: 2, data: { formatted: 'poo' } })).toBe(rendered);
-  expect(cellRenderer).toHaveBeenCalledWith(1, 2, { formatted: 'poo' });
+  const ctx = { virtualRow: 1, virtualCol: 2, data: { formatted: 'poo' } };
+  expect(cellRendererBuilder.update(rendered, ctx)).toBe(rendered);
+  expect(cellRenderer).toHaveBeenCalledWith(ctx);
   expect(mockReactDomRender).toHaveBeenCalledWith(a, rendered);
+});
+
+it('should use a rowBuilder to supply React rendered content to the grid via headerCellRenderer prop', () => {
+  const rows = [{ header: true }, { height: 4 }];
+  const cols = [{ fixed: true }, { width: 4 }];
+  const a = <a />;
+  const cellRenderer = jest.fn().mockReturnValue(a);
+  const reactGrid = mount(
+    <ReactGrid rows={rows} cols={cols} headerCellRenderer={cellRenderer} />
+  );
+  const gridRows = mockRowDim.rowColModel.add.mock.calls[0][0];
+  const cellRendererBuilder = gridRows[0].builder;
+  const rendered = cellRendererBuilder.render();
+  expect(rendered).toBeDefined();
+  const context = { virtualRow: 0, virtualCol: 1, data: { formatted: 'poo' } };
+  expect(cellRendererBuilder.update(rendered, context)).toBe(rendered);
+  expect(cellRenderer).toHaveBeenCalledWith(context);
+  expect(mockReactDomRender).toHaveBeenCalledWith(a, rendered);
+});
+
+it('should not call headerCellRenderer prop if its not a header', () => {
+  const rows = [{ header: true }, { height: 4 }];
+  const cols = [{ fixed: true }, { width: 4 }];
+  const a = <a />;
+  const cellRenderer = jest.fn().mockReturnValue(a);
+  mockRowDim.rowColModel.numHeaders.mockReturnValue(1);
+  const reactGrid = mount(
+    <ReactGrid rows={rows} cols={cols} headerCellRenderer={cellRenderer} />
+  );
+  const gridRows = mockRowDim.rowColModel.add.mock.calls[0][0];
+  const cellRendererBuilder = gridRows[0].builder;
+  const rendered = cellRendererBuilder.render();
+  expect(rendered).toBeDefined();
+
+  expect(cellRendererBuilder.update(rendered, { virtualRow: 1, virtualCol: 1, data: { formatted: 'poo' } })).toBe(undefined);
+  expect(cellRenderer).not.toHaveBeenCalled();
+  expect(mockReactDomRender).not.toHaveBeenCalled();
 });
