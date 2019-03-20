@@ -15,8 +15,9 @@ import { ReactGrid } from 'grid-react-adapter'
 const cols = Array.from({ length: 100 }, () => ({}))
 
 const rows = Array.from({ length: 1000 }, (_, rowIndex) => ({
-  data: cols.map(_, columnIndex) => ({
-    formatted: rowIndex + ', ' + columnIndex,
+  data: cols.map((_, columnIndex) => ({
+      formatted: rowIndex + ', ' + columnIndex,
+      value: rowIndex + ', ' + columnIndex,
   })),
 }))
 
