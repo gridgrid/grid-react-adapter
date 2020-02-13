@@ -84,7 +84,7 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
       data.forEach((row, dataRowIndex) => {
         this.grid.rows.converters.data.get(dataRowIndex).data = row;
       });
-      this.grid.dataModel.setDirty();
+      this.grid.dataModel.handleCachedDataChange();
     }
   }
 
