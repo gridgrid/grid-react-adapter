@@ -21,6 +21,11 @@ jobs:
     steps:
       - attach_workspace:
           at: /home
+      - run:
+          name: Authenticate with registry
+          command: |
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            echo "always-auth=true" >> ~/.npmrc     
       - run: npm run semantic-release || true
 
 workflows:
