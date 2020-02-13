@@ -52,7 +52,7 @@ const mockGridCreate = jest.fn((o: any) => ({
     })
   },
   dataModel: {
-    setDirty: mockDataSetDirty
+    handleCachedDataChange: mockDataSetDirty
   }
 }));
 (grid.create as any) = mockGridCreate;
