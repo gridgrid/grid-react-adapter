@@ -1,4 +1,5 @@
 // tslint:disable-next-line:no-unused-variable
+import * as _ from 'lodash';
 import * as React from 'react';
 import { Component, ReactElement } from 'react';
 import * as ReactDOM from 'react-dom';
@@ -53,24 +54,49 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     }
   }
 
-  reflectNewRowsOrCols(
-    nextDescriptors: Array<Partial<IRowColDescriptor>>,
-    dim: IGridDimension
-  ) {
-    dim.rowColModel.clear(true);
-    const newDescriptors = nextDescriptors.map((newDescriptor) => {
+  createDiscriptors(
+    descriptorObjects: Array<Partial<IRowColDescriptor>>,
+    dim: IGridDimension,
+  ): { baseDescriptors: IRowColDescriptor[], needsExpandedDescriptors: IRowColDescriptor[] } {
+    let needsExpandedDescriptors: IRowColDescriptor[] = [];
+    const baseDescriptors = descriptorObjects.map((newDescriptor) => {
       const descriptor = dim.rowColModel.create();
-      Object.assign(descriptor, newDescriptor);
+      if (newDescriptor.children) {
+
+        const { baseDescriptors: children, needsExpandedDescriptors: childNeedsExpanded } =
+          this.createDiscriptors(newDescriptor.children, dim);
+        descriptor.children = children;
+        needsExpandedDescriptors = [
+          ...needsExpandedDescriptors,
+          ...childNeedsExpanded,
+          ...newDescriptor.expanded ? [descriptor] : [],
+        ];
+      }
+      Object.assign(descriptor, _.omit(newDescriptor, 'children'));
       if ((dim.rowColModel as ColModel).col !== undefined) {
         descriptor.builder = newDescriptor.builder || this.cellRendererBuilder;
       }
-
       if ((dim.rowColModel as RowModel).row !== undefined && newDescriptor.header) {
         descriptor.builder = newDescriptor.builder || this.headerCellRendererBuilder;
       }
       return descriptor;
     });
-    dim.rowColModel.add(newDescriptors);
+
+    return {
+      baseDescriptors,
+      needsExpandedDescriptors,
+    };
+  }
+
+  reflectNewRowsOrCols(
+    nextDescriptors: Array<Partial<IRowColDescriptor>>,
+    dim: IGridDimension
+  ) {
+    dim.rowColModel.clear(true);
+    const { baseDescriptors, needsExpandedDescriptors } = this.createDiscriptors(nextDescriptors, dim);
+    const newDescriptors =
+      dim.rowColModel.add(baseDescriptors);
+    needsExpandedDescriptors.forEach((d) => d.expanded = true);
     return newDescriptors;
   }
 

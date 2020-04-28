@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 
 import _range = require('lodash/range');
 
-require('grid/src/scss/grid.scss');
+require('grid/src/scss/grid-custom.scss');
 
 import { ReactGrid } from '../lib/components';
 const rows = _range(0, 1000).map((_idx) => ({
@@ -13,6 +13,8 @@ const rows = _range(0, 1000).map((_idx) => ({
 const cols = _range(0, 100).map((_idx) => ({} as any));
 rows[0].header = true;
 rows[0].height = 50;
+rows[1].children = [{ height: 100 }];
+rows[1].expanded = true;
 
 const renderer = ({ virtualCol: col, virtualRow: row, data }: IBuilderUpdateContext) => {
   if (col % 2) {
