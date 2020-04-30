@@ -10,6 +10,7 @@ import {
   Grid,
   IBuilderUpdateContext,
   IColDescriptor,
+  IGridDataChange,
   IGridDataResult,
   IGridDimension,
   IGridOpts,
@@ -25,6 +26,7 @@ export interface IGridProps extends IGridOpts {
   data?: Array<Array<IGridDataResult<any>>>;
   cellRenderer?(context: IBuilderUpdateContext): ReactElement<any> | string | undefined;
   headerCellRenderer?(context: IBuilderUpdateContext): ReactElement<any> | string | undefined;
+  setData?(changes: Array<IGridDataChange<any>>): void;
 }
 
 export interface IGridState { }
@@ -46,6 +48,21 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     this.gridContainer.style.width = '100%';
     const { rows, cols, data, ...gridOpts } = this.props;
     this.grid = create(gridOpts);
+    const origSet = this.grid.dataModel.set;
+    this.grid.dataModel.set = (rowOrData: number | Array<IGridDataChange<any>>, c?: number, datum?: string | string[]) => {
+      const dataChanges = !Array.isArray(rowOrData)
+        ? [{
+          row: rowOrData,
+          col: c as number,
+          value: datum
+
+        }]
+        : rowOrData;
+      if (this.props.setData) {
+        this.props.setData(dataChanges);
+      }
+      origSet.call(this.grid.dataModel, dataChanges);
+    };
   }
 
   ensureGridContainerInDOM() {
