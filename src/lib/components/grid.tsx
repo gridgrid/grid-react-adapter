@@ -26,7 +26,7 @@ export interface IGridProps extends IGridOpts {
   data?: Array<Array<IGridDataResult<any>>>;
   cellRenderer?(context: IBuilderUpdateContext): ReactElement<any> | string | undefined;
   headerCellRenderer?(context: IBuilderUpdateContext): ReactElement<any> | string | undefined;
-  setData?(changes: Array<IGridDataChange<any>>): void;
+  setData?(changes: Array<IGridDataChange<any>>): Array<IGridDataChange<any>> | undefined;
 }
 
 export interface IGridState { }
@@ -58,10 +58,9 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
 
         }]
         : rowOrData;
-      if (this.props.setData) {
-        this.props.setData(dataChanges);
-      }
-      origSet.call(this.grid.dataModel, dataChanges);
+
+      const newChanges = this.props.setData && this.props.setData(dataChanges) || dataChanges;
+      origSet.call(this.grid.dataModel, newChanges);
     };
   }
 
