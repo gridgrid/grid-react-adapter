@@ -52,11 +52,11 @@ export default (opts) => {
     },
     libraryTarget: "umd2"
   } : {
-    path: path.resolve(distPath, `${isDemo ? 'demo' : 'main'}`),
-    publicPath: '/',
-    filename: '[name].[chunkhash].js',
-    sourceMapFilename: '[file].map'
-  };
+        path: path.resolve(distPath, `${isDemo ? 'demo' : 'main'}`),
+        publicPath: '/',
+        filename: '[name].[chunkhash].js',
+        sourceMapFilename: '[file].map'
+      };
 
   const plugins = [
     // isDev && new BundleAnalyzerPlugin() ||  || (() => {}),
@@ -80,15 +80,15 @@ export default (opts) => {
         '"https://api.staging.creditiq.com"' :
         (
           isDev ?
-          '"http://localhost:3000"' :
-          '"https://api.creditiq.com"'
+            '"http://localhost:3000"' :
+            '"https://api.creditiq.com"'
         ),
       __SOCKET_BASE_URL__: useStagingUrls ?
         '"https://socket.staging.creditiq.com"' :
         (
           isDev ?
-          '"http://localhost:8888"' :
-          '"https://socket.creditiq.com"'
+            '"http://localhost:8888"' :
+            '"https://socket.creditiq.com"'
         ),
       __STRIPE_KEY__: (branchName === 'prod' && !isDemo) ?
         '"pk_live_XNg1WHvwod1vdxnreJUO7o4y"' : '"pk_test_mwVRxa6S70EAv9uFNBYbNdml"',
@@ -100,13 +100,13 @@ export default (opts) => {
       __SENTRY_URL__: isDev ? '""' :
         (
           branchName === 'prod' ?
-          '"https://1cd04e434335429085e3ab6780e2b77a@sentry.io/148147"' :
-          '"https://6f7ddaa1250d46c1bc523d538d6c2726@sentry.io/148097"'
+            '"https://1cd04e434335429085e3ab6780e2b77a@sentry.io/148147"' :
+            '"https://6f7ddaa1250d46c1bc523d538d6c2726@sentry.io/148097"'
         ),
       __NEW_RELIC_APP_ID__: isDev ? '""' :
         (branchName === 'prod' ? '"51898835"' : '"51902382"'),
       __TITLE_ENV__: isDev ?
-        (`" - Dev${isOffline ? '- Offline' : ''}${isMockData ? isDemo ? ' - Demo' : '' : ` - ${isStagingApi ? 'Staging':'Local'} API`}"`) :
+        (`" - Dev${isOffline ? '- Offline' : ''}${isMockData ? isDemo ? ' - Demo' : '' : ` - ${isStagingApi ? 'Staging' : 'Local'} API`}"`) :
         (`"${isDemo ? ' - Demo' : ''}${branchName !== 'prod' ? ` - ${branchName}` : ''}"`),
       __OFFLINE_MODE__: !!(isDev && isOffline)
     }),
@@ -149,25 +149,25 @@ export default (opts) => {
   const extractTextOptionsNonGlobal = {
     fallback: 'style-loader',
     use: [{
-        loader: 'typings-for-css-modules-loader',
-        options: {
-          namedExport: true,
-          camelCase: true,
-          sourceMap: true,
-          modules: true,
-          importLoaders: 1,
-          localIdentName: '[name]__[local]___[hash:base64:5]'
-        }
-      },
-      {
-        loader: 'postcss-loader',
-        options: {
-          plugins: (loader) => [
-            autoprefixer(),
-          ],
-          sourceMap: true
-        }
-      },
+      loader: 'typings-for-css-modules-loader',
+      options: {
+        namedExport: true,
+        camelCase: true,
+        sourceMap: true,
+        modules: true,
+        importLoaders: 1,
+        localIdentName: '[name]__[local]___[hash:base64:5]'
+      }
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        plugins: (loader) => [
+          autoprefixer(),
+        ],
+        sourceMap: true
+      }
+    },
       'resolve-url-loader?sourceMap',
       'sass-loader?sourceMap'
     ]
@@ -189,105 +189,105 @@ export default (opts) => {
 
   const module = {
     rules: [{
-        test: /\.tsx?$/,
-        use: [{
-            loader: 'babel-loader',
-            options: {
-              "plugins": ["transform-runtime"]
-            }
-          },
-          {
-            loader: 'ts-loader',
-            options: {
-              compilerOptions: {
-                outDir: './'
-              }
-            }
-          }
-        ]
-      },
-      {
-        test: /\.js$/,
-        enforce: 'pre',
-        use: ["source-map-loader"]
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
-        use: ['babel-loader']
-      },
-      {
-        test: /\.eot(\?v=\d+.\d+.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            'name': 'assets/fonts/[name].[ext]'
-          }
+      test: /\.tsx?$/,
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          "plugins": ["transform-runtime"]
         }
       },
       {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff',
-            name: 'assets/fonts/[name].[ext]'
+        loader: 'ts-loader',
+        options: {
+          compilerOptions: {
+            outDir: './'
           }
-        }]
-      },
-      {
-        test: /\.ttf(\?v=\d+.\d+.\d+)?$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream',
-            name: 'assets/fonts/[name].[ext]'
-          }
-        }]
-      },
-      {
-        test: /\.svg(\?v=\d+.\d+.\d+)?$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml',
-            name: 'assets/fonts/[name].[ext]'
-          }
-        }],
-      },
-      {
-        test: /\.(jpe?g|png|gif|pdf)$/i,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: 'assets/images/[name].[ext]'
-          }
-        }]
-      },
-      {
-        test: /\.ico$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: 'assets/icons/[name].[ext]'
-          }
-        }]
-      },
-      {
-        test: (absPath) => /\.scss$/.test(absPath) && !globalSassRegex.test(absPath),
-        use: ExtractTextPlugin.extract(extractTextOptionsNonGlobal)
-      },
-      {
-        test: globalSassRegex,
-        use: ExtractTextPlugin.extract(extractTextOptionsGlobal)
-      },
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract(extractTextOptionsCss)
+        }
       }
+      ]
+    },
+    {
+      test: /\.js$/,
+      enforce: 'pre',
+      use: ["source-map-loader"]
+    },
+    {
+      test: /\.js$/,
+      exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
+      use: ['babel-loader']
+    },
+    {
+      test: /\.eot(\?v=\d+.\d+.\d+)?$/,
+      use: {
+        loader: 'url-loader',
+        options: {
+          'name': 'assets/fonts/[name].[ext]'
+        }
+      }
+    },
+    {
+      test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/font-woff',
+          name: 'assets/fonts/[name].[ext]'
+        }
+      }]
+    },
+    {
+      test: /\.ttf(\?v=\d+.\d+.\d+)?$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/octet-stream',
+          name: 'assets/fonts/[name].[ext]'
+        }
+      }]
+    },
+    {
+      test: /\.svg(\?v=\d+.\d+.\d+)?$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'image/svg+xml',
+          name: 'assets/fonts/[name].[ext]'
+        }
+      }],
+    },
+    {
+      test: /\.(jpe?g|png|gif|pdf)$/i,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          name: 'assets/images/[name].[ext]'
+        }
+      }]
+    },
+    {
+      test: /\.ico$/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          name: 'assets/icons/[name].[ext]'
+        }
+      }]
+    },
+    {
+      test: (absPath) => /\.scss$/.test(absPath) && !globalSassRegex.test(absPath),
+      use: ExtractTextPlugin.extract(extractTextOptionsNonGlobal)
+    },
+    {
+      test: globalSassRegex,
+      use: ExtractTextPlugin.extract(extractTextOptionsGlobal)
+    },
+    {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract(extractTextOptionsCss)
+    }
     ]
   };
 
@@ -322,6 +322,7 @@ export default (opts) => {
         'global.scss': 'commonjs global.scss',
         '_variables.scss': 'commonjs _variables.scss',
         '_mixins.scss': 'commonjs _mixins.scss',
+        'grid': 'commonjs grid',
       }),
       ...externals
     };
