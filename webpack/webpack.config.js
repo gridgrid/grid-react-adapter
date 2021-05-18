@@ -190,12 +190,7 @@ export default (opts) => {
   const module = {
     rules: [{
       test: /\.tsx?$/,
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          "plugins": ["transform-runtime"]
-        }
-      },
+      use: [
       {
         loader: 'ts-loader',
         options: {
@@ -210,11 +205,6 @@ export default (opts) => {
       test: /\.js$/,
       enforce: 'pre',
       use: ["source-map-loader"]
-    },
-    {
-      test: /\.js$/,
-      exclude: /node_modules\/(?!(@creditiq\/?|download\-in\-browser)).*/,
-      use: ['babel-loader']
     },
     {
       test: /\.eot(\?v=\d+.\d+.\d+)?$/,

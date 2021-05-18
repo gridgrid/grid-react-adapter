@@ -7,8 +7,7 @@ const moduleNameMapper = Object.assign({}, transformTSPaths(
 
 module.exports = {
   transform: {
-    '^.+\\.js$': '<rootDir>/node_modules/babel-jest',
-    '.(ts|tsx)': '<rootDir>/node_modules/ts-jest/preprocessor.js'
+    '.(ts|tsx)': 'ts-jest'
   },
   verbose: true,
   testEnvironment: 'jsdom',
@@ -22,5 +21,5 @@ module.exports = {
   moduleNameMapper: moduleNameMapper,
   watchPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFiles: ['./jest-setup.ts'],
-  setupTestFrameworkScriptFile: './jest-post-setup.ts',
+  setupFilesAfterEnv: ['./jest-post-setup.ts'],
 };
