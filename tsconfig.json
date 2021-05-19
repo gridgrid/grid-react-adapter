@@ -23,10 +23,7 @@
       "global.scss": ["./src/styles/global.scss"],
       "_variables.scss": ["./src/styles/_variables.scss"],
       "_mixins.scss": ["./src/styles/_mixins.scss"]
-    },
-    "plugins": [{
-      "name": "tslint-language-service"
-    }]
+    }
   },
   "compileOnSave": false,
   "include": [

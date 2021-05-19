@@ -1,24 +1,18 @@
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import WebpackMd5Hash from 'webpack-md5-hash';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import autoprefixer from 'autoprefixer';
-import * as path from 'path';
+const webpack = require('webpack');
+const WebpackMd5Hash = require('webpack-md5-hash');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+const  path = require('path');
 
 
-import failPlugin from 'webpack-fail-plugin';
-import {
-  CheckerPlugin
-} from 'awesome-typescript-loader';
-
-import externals from './externals';
-import transformTsConfigPaths from '../transformTSPaths';
+const transformTsConfigPaths = require('../transformTSPaths');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const globalSassRegex = /(toastr|grid)\.scss$/;
 const aliases = transformTsConfigPaths();
 
-export default (opts) => {
+module.exports = (opts) => {
   const isDemo = opts.isDemo;
   const branchName = opts.branchName;
   const isDev = opts.isDev || false;
@@ -29,7 +23,6 @@ export default (opts) => {
 
   const useStagingUrls = !!isStagingApi || (!isDev && branchName !== 'prod');
   const entry = [
-    'whatwg-fetch',
     ...(isDev && ['./src/app/webpack-public-path', 'webpack-hot-middleware/client?reload=true'] || []),
     isLibrary ? './src/lib/index' : './src/app/index'
   ];
@@ -48,7 +41,6 @@ export default (opts) => {
       root: "GridReactAdapter",
       amd: "grid-react-adapter",
       commonjs: "grid-react-adapter",
-      commonjs2: "grid-react-adapter"
     },
     libraryTarget: "umd2"
   } : {
@@ -60,10 +52,6 @@ export default (opts) => {
 
   const plugins = [
     // isDev && new BundleAnalyzerPlugin() ||  || (() => {}),
-
-    ...(!isDev && [
-      failPlugin
-    ] || []),
 
     ...(!isDev && !isLibrary && [
       // Hash the files using MD5 so that their names change when the content changes.
@@ -116,10 +104,8 @@ export default (opts) => {
       // new webpack.NoErrorsPlugin(),
     ] || []),
 
-    new CheckerPlugin(),
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
       filename: isDev ? 'app.css' : `[name]${!isLibrary && '.[contenthash]' || ''}.css`,
-      allChunks: true
     }),
     new HtmlWebpackPlugin({ // Create HTML file that includes references to bundled CSS and JS.
       template: '!!ejs-compiled-loader!src/app/index.ejs',
@@ -137,18 +123,19 @@ export default (opts) => {
       },
       inject: true
     }),
-    ...(!isDev && [
-
-      // Minify JS
-      new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true
-      })
-    ] || []),
   ];
 
-  const extractTextOptionsNonGlobal = {
-    fallback: 'style-loader',
-    use: [{
+  const extractTextOptionsNonGlobal = [
+    {
+      loader: MiniCssExtractPlugin.loader,
+      options: {
+        esModule: true,
+        modules: {
+          namedExport: true,
+        },
+      },
+    },
+    {
       loader: 'typings-for-css-modules-loader',
       options: {
         namedExport: true,
@@ -171,12 +158,12 @@ export default (opts) => {
       'resolve-url-loader?sourceMap',
       'sass-loader?sourceMap'
     ]
-  };
+  ;
 
   // yaya it's dirty but it's also DRY. DRY and dirty suckas.
   const extractTextOptionsGlobal = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
   const extractTextOptionsCss = JSON.parse(JSON.stringify(extractTextOptionsNonGlobal));
-  extractTextOptionsCss.use[0] = extractTextOptionsGlobal.use[0] = {
+  extractTextOptionsCss[0] = extractTextOptionsGlobal[0] = {
     loader: 'css-loader',
     options: {
       modules: false,
@@ -185,7 +172,7 @@ export default (opts) => {
       localIdentName: '[name]__[local]___[hash:base64:5]'
     }
   };
-  extractTextOptionsCss.use.splice(extractTextOptionsCss.use.indexOf('sass-loader'), 1);
+  extractTextOptionsCss.splice(extractTextOptionsCss.indexOf('sass-loader'), 1);
 
   const module = {
     rules: [{
@@ -193,11 +180,6 @@ export default (opts) => {
       use: [
       {
         loader: 'ts-loader',
-        options: {
-          compilerOptions: {
-            outDir: './'
-          }
-        }
       }
       ]
     },
@@ -268,21 +250,22 @@ export default (opts) => {
     },
     {
       test: (absPath) => /\.scss$/.test(absPath) && !globalSassRegex.test(absPath),
-      use: ExtractTextPlugin.extract(extractTextOptionsNonGlobal)
+      use:extractTextOptionsNonGlobal
     },
     {
       test: globalSassRegex,
-      use: ExtractTextPlugin.extract(extractTextOptionsGlobal)
+      use:extractTextOptionsGlobal
     },
     {
       test: /\.css$/,
-      use: ExtractTextPlugin.extract(extractTextOptionsCss)
+      use:extractTextOptionsCss
     }
     ]
   };
 
   // webpack config object
   const config = {
+    mode : isDev ? 'development' : 'production',
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: aliases
@@ -314,7 +297,6 @@ export default (opts) => {
         '_mixins.scss': 'commonjs _mixins.scss',
         'grid': 'commonjs grid',
       }),
-      ...externals
     };
   }
   return config;

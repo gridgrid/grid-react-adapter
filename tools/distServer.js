@@ -1,9 +1,9 @@
 // This file configures a web server for testing the production build
 // on your local machine.
 
-import browserSync from 'browser-sync';
-import historyApiFallback from 'connect-history-api-fallback';
-import { chalkProcessing } from './chalkConfig';
+const browserSync = requrie('browser-sync');
+const historyApiFallback = requrie('connect-history-api-fallback');
+const { chalkProcessing } = requrie('./chalkConfig');
 
 const isDemo = process.argv[2] === 'demo';
 

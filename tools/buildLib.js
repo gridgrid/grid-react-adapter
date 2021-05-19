@@ -1,19 +1,16 @@
 // More info on Webpack's Node API here: https://webpack.github.io/docs/node.js-api.html
 // Allowing console calls below since this is a build file.
 /* eslint-disable no-console */
-import webpack from 'webpack';
-import createConfig from '../webpack/webpack.config';
-import {
-  chalkError,
-  chalkSuccess,
-  chalkWarning,
+const webpack = require('webpack');
+const createConfig = require('../webpack/webpack.config');
+const {
   chalkProcessing
-} from './chalkConfig';
-import * as yargs from 'yargs';
+} = require('./chalkConfig.js');
+const yargs = require('yargs');
 
-import {
+const {
   doneCallback
-} from './buildCallback';
+} = require('./buildCallback');
 
 const isWatchMode = !!yargs.parse(process.argv).watch;
 const branchName = process.env.npm_package_config_build_branch; // ok if this is undefined
