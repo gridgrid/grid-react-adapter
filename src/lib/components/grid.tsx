@@ -130,20 +130,6 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
     }
   }
 
-  shouldComponentUpdate(nextProps: IGridProps) {
-    if (this.descriptorsChanged(this.props.rows, nextProps.rows)) {
-      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
-    }
-    if (this.descriptorsChanged(this.props.cols, nextProps.cols)) {
-      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
-    }
-
-    if (this.props.data !== nextProps.data) {
-      this.handleNewData(nextProps.data);
-    }
-    return false;
-  }
-
   componentDidMount() {
     this.ensureGridContainerInDOM();
     this.grid.build(this.gridContainer);
@@ -180,8 +166,24 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
   }
 
   // we return false from should update but react may ignore our hint in the future
-  componentDidUpdate() {
+  componentDidUpdate(prevProps : IGridProps) {
     this.ensureGridContainerInDOM();
+
+    const nextProps  = this.props;
+    if (this.descriptorsChanged(prevProps.rows, nextProps.rows)) {
+      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
+    }
+    if (this.descriptorsChanged(prevProps.cols, nextProps.cols)) {
+      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
+    }
+
+    if (prevProps.data !== nextProps.data) {
+      this.handleNewData(nextProps.data);
+    }
+  }
+  
+  componentWillUnmount(){
+    this.grid.destroy();
   }
 
   render() {
