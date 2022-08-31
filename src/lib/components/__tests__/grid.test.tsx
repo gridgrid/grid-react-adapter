@@ -57,7 +57,7 @@ const mockGridCreate = jest.fn((o: any) => ({
 }));
 (grid.create as any) = mockGridCreate;
 
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import { ReactGrid } from '../grid';
 
 beforeEach(() => {
@@ -75,13 +75,6 @@ beforeEach(() => {
   mockDataGet.mockClear();
   mockDataSet.mockClear();
   mockReactDomRender.mockClear();
-});
-
-it('should render', () => {
-  const reactGrid = shallow(
-    <ReactGrid rows={[]} cols={[]} />
-  );
-  expect(reactGrid).toMatchElement(<div />);
 });
 
 it('should create a container for the grid', () => {
@@ -109,23 +102,23 @@ it('should keep the container in the DOM on subsequent updates', () => {
 });
 
 it('should create a grid with opts', () => {
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid rows={[]} cols={[]} snapToCell={true} />
   );
   expect(mockGridCreate).toHaveBeenCalledWith({ snapToCell: true });
 });
 
 it('should build a grid with the container', () => {
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid rows={[]} cols={[]} />
   );
-  expect(mockGridBuild).toHaveBeenCalledWith((reactGrid.instance() as ReactGrid).gridContainer);
+  expect(mockGridBuild).toHaveBeenCalledWith((reactGrid.instance() as ReactGrid).gridContainer.current);
 });
 
 it('should add the supplied rows and cols to the grid', () => {
   const rows = [{ header: true }, { height: 4 }];
   const cols = [{ fixed: true }, { width: 4 }];
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid rows={rows} cols={cols} />
   );
   expect(mockRowDim.rowColModel.add.mock.calls[0][0]).toMatchObject(rows);
@@ -135,7 +128,7 @@ it('should add the supplied rows and cols to the grid', () => {
 it('should not call add if the supplied rows and cols havent changed functionally', () => {
   const rows = [{ header: true }, { height: 4 }];
   const cols = [{ fixed: true }, { width: 4 }];
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid rows={rows} cols={cols} />
   );
   mockRowDim.rowColModel.add.mockClear();
@@ -151,7 +144,7 @@ it('should not call add if the supplied rows and cols havent changed functionall
 it('should not call add if the supplied rows and cols havent changed ref', () => {
   const rows = [{ header: true }, { height: 4 }];
   const cols = [{ fixed: true }, { width: 4 }];
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid rows={rows} cols={cols} />
   );
   mockRowDim.rowColModel.add.mockClear();
@@ -167,7 +160,7 @@ it('should not call add if the supplied rows and cols havent changed ref', () =>
 it('should supply data to the grid', () => {
   const dataRow1 = [{ value: undefined, formatted: '1' }, { value: undefined, formatted: '2' }];
   const dataRow2 = [{ value: undefined, formatted: '3' }, { value: undefined, formatted: '4' }];
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid
       rows={[{}, {}]}
       cols={[{}, {}]}
@@ -188,7 +181,7 @@ it('should re-supply data to the grid IFF the ref has changed', () => {
   const dataRow2 = [{ value: undefined, formatted: '3' }, { value: undefined, formatted: '4' }];
   const rows = [{}, {}];
   const cols = [{}, {}];
-  const reactGrid = shallow(
+  const reactGrid = mount(
     <ReactGrid
       rows={rows}
       cols={cols}

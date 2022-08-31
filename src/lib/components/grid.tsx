@@ -32,42 +32,44 @@ export interface IGridProps extends IGridOpts {
 export interface IGridState { }
 
 export class ReactGrid extends Component<IGridProps, IGridState> {
-  grid: Grid;
+  grid: Grid | undefined;
   cellRendererBuilder: IRowColBuilder | undefined;
   headerCellRendererBuilder: IRowColBuilder | undefined;
-  gridContainer: HTMLElement;
-  reactContainer: HTMLElement | null;
+  gridContainer: React.RefObject<HTMLDivElement>;
 
   constructor(props: IGridProps) {
     super(props);
-    this.gridContainer = document.createElement('div');
-    this.gridContainer.style.position = 'absolute';
-    this.gridContainer.style.top = '0';
-    this.gridContainer.style.left = '0';
-    this.gridContainer.style.height = '100%';
-    this.gridContainer.style.width = '100%';
+    this.gridContainer = React.createRef();
+  }
+
+  private createGrid() {
     const { rows, cols, data, ...gridOpts } = this.props;
-    this.grid = create(gridOpts);
-    const origSet = this.grid.dataModel.set;
-    this.grid.dataModel.set = (rowOrData: number | Array<IGridDataChange<any>>, c?: number, datum?: string | string[]) => {
+    const grid = create(gridOpts);
+    this.grid = grid;
+    const origSet = grid.dataModel.set;
+    grid.dataModel.set = (rowOrData: number | Array<IGridDataChange<any>>, c?: number, datum?: string | string[]) => {
       const dataChanges = !Array.isArray(rowOrData)
         ? [{
           row: rowOrData,
           col: c as number,
           value: datum
-
         }]
         : rowOrData;
 
       const newChanges = this.props.setData && this.props.setData(dataChanges) || dataChanges;
-      origSet.call(this.grid.dataModel, newChanges);
+      origSet.call(grid.dataModel, newChanges);
     };
+    return grid
   }
 
   ensureGridContainerInDOM() {
-    if (this.reactContainer && this.reactContainer.firstChild !== this.gridContainer) {
-      this.reactContainer.appendChild(this.gridContainer);
+    const grid = this.grid || this.createGrid();
+    if (this.gridContainer.current) {
+      grid.build(this.gridContainer.current);
+    } else {
+      console.error('grid ref didnt exist at mount')
     }
+    return grid;
   }
 
   createDiscriptors(
@@ -121,19 +123,19 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
       d1.some((descriptor, index) => JSON.stringify(d2[index]) !== JSON.stringify(descriptor));
   }
 
-  handleNewData(data: Array<Array<IGridDataResult<any>>> | undefined) {
+  handleNewData(data: Array<Array<IGridDataResult<any>>> | undefined, grid: Grid) {
     if (data) {
       data.forEach((row, dataRowIndex) => {
-        this.grid.rows.converters.data.get(dataRowIndex).data = row;
+        grid.rows.converters.data.get(dataRowIndex).data = row;
       });
-      this.grid.dataModel.handleCachedDataChange();
+      grid.dataModel.handleCachedDataChange();
     }
   }
 
   componentDidMount() {
-    this.ensureGridContainerInDOM();
-    this.grid.build(this.gridContainer);
-    this.cellRendererBuilder = this.grid.colModel.createBuilder(
+    console.log('mount')
+    const grid = this.ensureGridContainerInDOM();
+    this.cellRendererBuilder = grid.colModel.createBuilder(
       () => document.createElement('div'),
       (element, context) => {
         const rendered = this.props.cellRenderer && this.props.cellRenderer(context);
@@ -145,11 +147,11 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
       }
     );
 
-    this.headerCellRendererBuilder = this.grid.rowModel.createBuilder(
+    this.headerCellRendererBuilder = grid.rowModel.createBuilder(
       () => document.createElement('div'),
       (element, context) => {
         const { virtualRow } = context;
-        if (virtualRow >= this.grid.rows.rowColModel.numHeaders()) {
+        if (virtualRow >= grid.rows.rowColModel.numHeaders()) {
           return undefined;
         }
         const rendered = this.props.headerCellRenderer && this.props.headerCellRenderer(context);
@@ -160,35 +162,55 @@ export class ReactGrid extends Component<IGridProps, IGridState> {
         return element;
       }
     );
-    this.reflectNewRowsOrCols(this.props.rows, this.grid.rows);
-    this.reflectNewRowsOrCols(this.props.cols, this.grid.cols);
-    this.handleNewData(this.props.data);
+    this.reflectNewRowsOrCols(this.props.rows, grid.rows);
+    this.reflectNewRowsOrCols(this.props.cols, grid.cols);
+    this.handleNewData(this.props.data, grid);
   }
 
   // we return false from should update but react may ignore our hint in the future
-  componentDidUpdate(prevProps : IGridProps) {
-    this.ensureGridContainerInDOM();
+  componentDidUpdate(prevProps: IGridProps) {
+    console.log('update')
+    const something = 'a string you cant ignore';
 
-    const nextProps  = this.props;
+    const grid = this.ensureGridContainerInDOM();
+
+    const nextProps = this.props;
     if (this.descriptorsChanged(prevProps.rows, nextProps.rows)) {
-      this.reflectNewRowsOrCols(nextProps.rows, this.grid.rows);
+      this.reflectNewRowsOrCols(nextProps.rows, grid.rows);
     }
     if (this.descriptorsChanged(prevProps.cols, nextProps.cols)) {
-      this.reflectNewRowsOrCols(nextProps.cols, this.grid.cols);
+      this.reflectNewRowsOrCols(nextProps.cols, grid.cols);
     }
 
     if (prevProps.data !== nextProps.data) {
-      this.handleNewData(nextProps.data);
+      this.handleNewData(nextProps.data, grid);
     }
   }
-  
-  componentWillUnmount(){
-    this.grid.destroy();
+
+  componentWillUnmount() {
+    console.log('unmount')
+    if(this.grid){
+      this.grid.destroy();
+      this.grid.destroyed = true;
+      this.grid = undefined;
+    }
   }
 
   render() {
+
+
     return (
-      <div ref={(elem) => { this.reactContainer = elem; }} />
+      <div>
+        <div ref={this.gridContainer} style={gridStyle} />
+      </div>
     );
   }
 }
+
+const gridStyle = {
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  height: '100%',
+  width: '100%',
+} as const

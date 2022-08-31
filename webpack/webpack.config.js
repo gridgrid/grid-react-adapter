@@ -201,7 +201,8 @@ module.exports = (opts) => {
 
   // webpack config object
   const config = {
-    mode : isDev ? 'development' : 'production',
+    // mode : isDev ? 'development' : 'production',
+    mode : 'development',
     resolve: {
       extensions: ['.js', '.ts', '.tsx'],
       alias: aliases

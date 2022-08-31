@@ -23,7 +23,7 @@ const webpackInstance = webpack(
   createConfig({
     demo: false,
     branchName,
-    isLibrary: true
+    isLibrary: true,
   })
 );
 
