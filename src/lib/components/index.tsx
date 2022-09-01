@@ -1,1 +1,1 @@
-export { ReactGrid } from './grid';
+export * from './grid';

@@ -7,7 +7,7 @@ import _merge = require('lodash/merge');
 
 const mockReactDomRender = jest.fn();
 jest.mock('react-dom', () => ({
-  render: mockReactDomRender
+  render: mockReactDomRender,
 }));
 
 const mockDataSet = jest.fn();
@@ -23,15 +23,15 @@ const makeDescriptor = (): Partial<IRowColDescriptor> => {
 const mockDim = () => ({
   converters: {
     data: {
-      get: jest.fn(makeDescriptor)
-    }
+      get: jest.fn(makeDescriptor),
+    },
   },
   rowColModel: {
     clear: jest.fn(),
     add: jest.fn(),
     create: jest.fn(makeDescriptor),
-    numHeaders: jest.fn()
-  }
+    numHeaders: jest.fn(),
+  },
 });
 const mockRowDim = _merge({}, mockDim(), { rowColModel: { row: jest.fn() } });
 const mockColDim = _merge({}, mockDim(), { rowColModel: { col: jest.fn() } });
@@ -43,17 +43,22 @@ const mockGridCreate = jest.fn((o: any) => ({
   cols: mockColDim,
   colModel: {
     createBuilder: (render: any, update: any): any => ({
-      render, update
-    })
+      render,
+      update,
+    }),
   },
   rowModel: {
     createBuilder: (render: any, update: any): any => ({
-      render, update
-    })
+      render,
+      update,
+    }),
   },
   dataModel: {
-    handleCachedDataChange: mockDataSetDirty
-  }
+    handleCachedDataChange: mockDataSetDirty,
+  },
+  eventLoop: {
+    bind: () => () => {},
+  },
 }));
 (grid.create as any) = mockGridCreate;
 
@@ -78,9 +83,7 @@ beforeEach(() => {
 });
 
 it('should create a container for the grid', () => {
-  const reactGrid = mount(
-    <ReactGrid rows={[]} cols={[]} />
-  );
+  const reactGrid = mount(<ReactGrid rows={[]} cols={[]} />);
   const gridContainer = reactGrid.children().getDOMNode().firstElementChild as HTMLElement;
   expect(gridContainer).toBeDefined();
   if (gridContainer) {
@@ -93,34 +96,26 @@ it('should create a container for the grid', () => {
 });
 
 it('should keep the container in the DOM on subsequent updates', () => {
-  const reactGrid = mount(
-    <ReactGrid rows={[]} cols={[]} />
-  );
+  const reactGrid = mount(<ReactGrid rows={[]} cols={[]} />);
   expect(reactGrid.children().getDOMNode().firstElementChild).toBeDefined();
   reactGrid.setProps({ rows: [{}], cols: [] });
   expect(reactGrid.children().getDOMNode().firstElementChild).toBeDefined();
 });
 
 it('should create a grid with opts', () => {
-  const reactGrid = mount(
-    <ReactGrid rows={[]} cols={[]} snapToCell={true} />
-  );
+  const reactGrid = mount(<ReactGrid rows={[]} cols={[]} snapToCell={true} />);
   expect(mockGridCreate).toHaveBeenCalledWith({ snapToCell: true });
 });
 
 it('should build a grid with the container', () => {
-  const reactGrid = mount(
-    <ReactGrid rows={[]} cols={[]} />
-  );
+  const reactGrid = mount(<ReactGrid rows={[]} cols={[]} />);
   expect(mockGridBuild).toHaveBeenCalledWith((reactGrid.instance() as ReactGrid).gridContainer.current);
 });
 
 it('should add the supplied rows and cols to the grid', () => {
   const rows = [{ header: true }, { height: 4 }];
   const cols = [{ fixed: true }, { width: 4 }];
-  const reactGrid = mount(
-    <ReactGrid rows={rows} cols={cols} />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} />);
   expect(mockRowDim.rowColModel.add.mock.calls[0][0]).toMatchObject(rows);
   expect(mockColDim.rowColModel.add.mock.calls[0][0]).toMatchObject(cols);
 });
@@ -128,14 +123,12 @@ it('should add the supplied rows and cols to the grid', () => {
 it('should not call add if the supplied rows and cols havent changed functionally', () => {
   const rows = [{ header: true }, { height: 4 }];
   const cols = [{ fixed: true }, { width: 4 }];
-  const reactGrid = mount(
-    <ReactGrid rows={rows} cols={cols} />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} />);
   mockRowDim.rowColModel.add.mockClear();
   mockColDim.rowColModel.add.mockClear();
   reactGrid.setProps({
     rows: JSON.parse(JSON.stringify(rows)),
-    cols: JSON.parse(JSON.stringify(cols))
+    cols: JSON.parse(JSON.stringify(cols)),
   });
   expect(mockRowDim.rowColModel.add).not.toHaveBeenCalled();
   expect(mockColDim.rowColModel.add).not.toHaveBeenCalled();
@@ -144,32 +137,27 @@ it('should not call add if the supplied rows and cols havent changed functionall
 it('should not call add if the supplied rows and cols havent changed ref', () => {
   const rows = [{ header: true }, { height: 4 }];
   const cols = [{ fixed: true }, { width: 4 }];
-  const reactGrid = mount(
-    <ReactGrid rows={rows} cols={cols} />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} />);
   mockRowDim.rowColModel.add.mockClear();
   mockColDim.rowColModel.add.mockClear();
   reactGrid.setProps({
     rows,
-    cols
+    cols,
   });
   expect(mockRowDim.rowColModel.add).not.toHaveBeenCalled();
   expect(mockColDim.rowColModel.add).not.toHaveBeenCalled();
 });
 
 it('should supply data to the grid', () => {
-  const dataRow1 = [{ value: undefined, formatted: '1' }, { value: undefined, formatted: '2' }];
-  const dataRow2 = [{ value: undefined, formatted: '3' }, { value: undefined, formatted: '4' }];
-  const reactGrid = mount(
-    <ReactGrid
-      rows={[{}, {}]}
-      cols={[{}, {}]}
-      data={[
-        dataRow1,
-        dataRow2
-      ]}
-    />
-  );
+  const dataRow1 = [
+    { value: undefined, formatted: '1' },
+    { value: undefined, formatted: '2' },
+  ];
+  const dataRow2 = [
+    { value: undefined, formatted: '3' },
+    { value: undefined, formatted: '4' },
+  ];
+  const reactGrid = mount(<ReactGrid rows={[{}, {}]} cols={[{}, {}]} data={[dataRow1, dataRow2]} />);
   expect(mockRowDim.converters.data.get).toHaveBeenCalledWith(0);
   expect(mockRowDim.converters.data.get).toHaveBeenCalledWith(1);
   expect(mockDataSet).toHaveBeenCalledWith(dataRow1);
@@ -177,20 +165,17 @@ it('should supply data to the grid', () => {
 });
 
 it('should re-supply data to the grid IFF the ref has changed', () => {
-  const dataRow1 = [{ value: undefined, formatted: '1' }, { value: undefined, formatted: '2' }];
-  const dataRow2 = [{ value: undefined, formatted: '3' }, { value: undefined, formatted: '4' }];
+  const dataRow1 = [
+    { value: undefined, formatted: '1' },
+    { value: undefined, formatted: '2' },
+  ];
+  const dataRow2 = [
+    { value: undefined, formatted: '3' },
+    { value: undefined, formatted: '4' },
+  ];
   const rows = [{}, {}];
   const cols = [{}, {}];
-  const reactGrid = mount(
-    <ReactGrid
-      rows={rows}
-      cols={cols}
-      data={[
-        dataRow1,
-        dataRow2
-      ]}
-    />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} data={[dataRow1, dataRow2]} />);
   mockRowDim.converters.data.get.mockClear();
   mockDataSet.mockClear();
   const data = [dataRow1, dataRow2];
@@ -211,9 +196,7 @@ it('should use a colBuilder to supply React rendered content to the grid via cel
   const cols = [{ fixed: true }, { width: 4 }];
   const a = <a />;
   const cellRenderer = jest.fn().mockReturnValue(a);
-  const reactGrid = mount(
-    <ReactGrid rows={rows} cols={cols} cellRenderer={cellRenderer} />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} cellRenderer={cellRenderer} />);
   const gridCols = mockColDim.rowColModel.add.mock.calls[0][0];
   const cellRendererBuilder = gridCols[0].builder;
   const rendered = cellRendererBuilder.render();
@@ -229,9 +212,7 @@ it('should use a rowBuilder to supply React rendered content to the grid via hea
   const cols = [{ fixed: true }, { width: 4 }];
   const a = <a />;
   const cellRenderer = jest.fn().mockReturnValue(a);
-  const reactGrid = mount(
-    <ReactGrid rows={rows} cols={cols} headerCellRenderer={cellRenderer} />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} headerCellRenderer={cellRenderer} />);
   const gridRows = mockRowDim.rowColModel.add.mock.calls[0][0];
   const cellRendererBuilder = gridRows[0].builder;
   const rendered = cellRendererBuilder.render();
@@ -248,9 +229,7 @@ it('should not call headerCellRenderer prop if its not a header', () => {
   const a = <a />;
   const cellRenderer = jest.fn().mockReturnValue(a);
   mockRowDim.rowColModel.numHeaders.mockReturnValue(1);
-  const reactGrid = mount(
-    <ReactGrid rows={rows} cols={cols} headerCellRenderer={cellRenderer} />
-  );
+  const reactGrid = mount(<ReactGrid rows={rows} cols={cols} headerCellRenderer={cellRenderer} />);
   const gridRows = mockRowDim.rowColModel.add.mock.calls[0][0];
   const cellRendererBuilder = gridRows[0].builder;
   const rendered = cellRendererBuilder.render();
